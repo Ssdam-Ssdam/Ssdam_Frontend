@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'signup_screen.dart'; // 회원가입 화면 파일 임포트
 
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true, // 키보드가 나타날 때 화면 크기를 조정
       backgroundColor: Colors.white,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
+    child: SingleChildScrollView( // 키보드로 인해 오버플로우 방지
+    child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -16,42 +19,48 @@ class LoginScreen extends StatelessWidget {
               Text(
                 'Login',
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 55,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 40),
+              SizedBox(height: 80),
 
               // 아이디 입력 필드
-              TextField(
-                decoration: InputDecoration(
-                  hintText: '아이디',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide.none,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50.0), // 양옆 여백
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: '아이디',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
                 ),
               ),
               SizedBox(height: 20),
 
               // 비밀번호 입력 필드
-              TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: '비밀번호',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide.none,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50.0), // 양옆 여백
+                child: TextField(
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    hintText: '비밀번호',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 30),
 
               // 아이디/비밀번호 찾기 텍스트
               GestureDetector(
@@ -69,7 +78,7 @@ class LoginScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              SizedBox(height: 30),
+              SizedBox(height: 80),
 
               // 로그인 및 회원가입 버튼
               Row(
@@ -81,39 +90,52 @@ class LoginScreen extends StatelessWidget {
                       print('로그인 버튼 클릭');
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green, // primary 대신 backgroundColor
+                      backgroundColor: Color(0xFF599468), // primary 대신 backgroundColor
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                      minimumSize: Size(120, 50),
+                      minimumSize: Size(140, 40),
                     ),
                     child: Text(
                       '로그인',
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white, // 텍스트 색상을 흰색으로 설정
+                      ),
                     ),
                   ),
 
                   // 회원가입 버튼
                   ElevatedButton(
                     onPressed: () {
-                      print('회원가입 버튼 클릭');
+                      // 회원가입 버튼 클릭 시 SignupScreen으로 이동
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SignupScreen(),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green, // primary 대신 backgroundColor
+                      backgroundColor: Color(0xFF599468), // primary 대신 backgroundColor
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                      minimumSize: Size(120, 50),
+                      minimumSize: Size(140, 40),
                     ),
                     child: Text(
                       '회원가입',
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white, // 텍스트 색상을 흰색으로 설정
+                      ),
                     ),
                   ),
                 ],
               ),
             ],
           ),
+    ),
         ),
       ),
     );
