@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart'; // login_screen.dart 파일 불러오기
+import 'screens/login_screen.dart'; // LoginScreen 경로를 맞추세요
 
 void main() {
   runApp(MyApp());
@@ -9,12 +9,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Login',
+      debugShowCheckedModeBanner: false, // 디버그 배너 제거
+      title: '쓰담쓰담', // 앱 제목
       theme: ThemeData(
-        primaryColor: Color(0xFF599468), // 앱 전체 테마 색상
+        primarySwatch: Colors.green, // 기본 테마 색상
       ),
-      home: LoginScreen(), // 초기 화면 설정
+      home: LoginScreen(), // LoginScreen 호출
     );
   }
 }
