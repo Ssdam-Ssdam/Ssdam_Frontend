@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'login_screen.dart'; // LoginScreen 경로를 맞추세요
 
 class SignupScreen extends StatelessWidget {
   @override
@@ -8,7 +9,7 @@ class SignupScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SingleChildScrollView( // 스크롤 가능하도록 전체 감싸기
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0), // 양옆 여백 추가
+          padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0), // 양옆 여백 추가
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -34,7 +35,7 @@ class SignupScreen extends StatelessWidget {
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: Colors.grey[200],
+                  fillColor: Color(0xFFF5F5F5),
                 ),
               ),
               SizedBox(height: 5),
@@ -59,7 +60,7 @@ class SignupScreen extends StatelessWidget {
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: Colors.grey[200],
+                  fillColor: Color(0xFFF5F5F5),
                 ),
               ),
               SizedBox(height: 20),
@@ -73,7 +74,7 @@ class SignupScreen extends StatelessWidget {
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: Colors.grey[200],
+                  fillColor: Color(0xFFF5F5F5),
                 ),
               ),
               SizedBox(height: 20),
@@ -86,7 +87,7 @@ class SignupScreen extends StatelessWidget {
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: Colors.grey[200],
+                  fillColor: Color(0xFFF5F5F5),
                 ),
               ),
               SizedBox(height: 20),
@@ -100,7 +101,7 @@ class SignupScreen extends StatelessWidget {
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: Colors.grey[200],
+                  fillColor: Color(0xFFF5F5F5),
                 ),
               ),
               SizedBox(height: 20),
@@ -117,7 +118,7 @@ class SignupScreen extends StatelessWidget {
                           borderSide: BorderSide.none,
                         ),
                         filled: true,
-                        fillColor: Colors.grey[200],
+                        fillColor: Color(0xFFF5F5F5),
                       ),
                     ),
                   ),
@@ -145,7 +146,13 @@ class SignupScreen extends StatelessWidget {
               // 가입 버튼
               ElevatedButton(
                 onPressed: () {
-                  print('가입 버튼 클릭');
+                  // 가입 버튼 클릭 시 LoginScreen으로 이동
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginScreen(),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF599468),

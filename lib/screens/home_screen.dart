@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               // 배너 슬라이더
               SizedBox(
-                width: 320,
+                width: 350,
                 height: 220,
                 child: PageView.builder(
                   controller: _pageController,

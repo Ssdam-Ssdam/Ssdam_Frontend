@@ -28,13 +28,10 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          '쓰담쓰담',
-          style: TextStyle(
-            color: Colors.green,
-            fontWeight: FontWeight.bold,
-            fontSize: 30,
-          ),
+        automaticallyImplyLeading: false, // 뒤로가기 버튼 제거
+        title: Image.asset(
+          'assets/logo.png',
+          height: 28,
         ),
         backgroundColor: Colors.white,
         centerTitle: false,
