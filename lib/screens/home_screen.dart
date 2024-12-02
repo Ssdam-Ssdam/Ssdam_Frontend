@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
+  final VoidCallback onNavigateToInquiry; // InquiryScreen으로 이동하는 콜백
+  final VoidCallback onNavigateToFAQ; // FAQScreen으로 이동하는 콜백
+
+  HomeScreen({
+    required this.onNavigateToInquiry,
+    required this.onNavigateToFAQ,
+  });
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -56,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView( // 오버플로우 방지를 위해 스크롤 가능하게 처리
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -93,23 +101,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Expanded(
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0), // 양 옆 여백 추가
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
                       decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.1), // 배경 색상 변경 (연한 초록색)
-                        borderRadius: BorderRadius.circular(10), // 둥근 모서리
+                        color: Colors.grey.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: TextField(
                         decoration: InputDecoration(
                           hintText: '폐기물 종류 검색',
-                          hintStyle: TextStyle(color: Colors.black26), // 힌트 텍스트 색상
-                          border: InputBorder.none, // 기본 테두리 제거
+                          hintStyle: TextStyle(color: Color(0xFF5F5F5F)),
+                          border: InputBorder.none,
                         ),
                       ),
                     ),
                   ),
                   SizedBox(width: 10),
                   IconButton(
-                    icon: Icon(Icons.search, color: Colors.green),
+                    icon: Icon(Icons.search, color: Color(0xFF599468)),
                     onPressed: () {},
                   ),
                 ],
@@ -122,9 +130,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   // 지도 섹션
                   Expanded(
                     child: Container(
-                      height: 250, // 길쭉한 크기로 설정
+                      height: 250,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.green),
+                        border: Border.all(color: Color(0xFF599468)),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -132,12 +140,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text(
                             '우리 동네',
-                            style: TextStyle(fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Color(0xFF599468),
+                                fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
                           Text(
                             '폐기물 스티커 판매점 찾기',
-                            style: TextStyle(fontSize: 15, color: Colors.black54, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Color(0xFF5F5F5F),
+                                fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 10),
@@ -152,50 +166,65 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(width: 30),
-                  // 자주 묻는 질문 및 고객 문의 섹션
                   Column(
                     children: [
+                      // 자주 묻는 질문 버튼
                       Container(
-                        width: 130, // 버튼의 너비
-                        height: 120, // 버튼의 높이
+                        width: 130,
+                        height: 120,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          border: Border.all(color: Colors.green),
+                          border: Border.all(color: Color(0xFF599468)),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.help_outline, color: Colors.green, size: 30),
-                            SizedBox(height: 8),
-                            Text(
-                              '자주 묻는 질문',
-                              style: TextStyle(color: Colors.green, fontSize: 14),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                        child: InkWell(
+                          onTap: widget.onNavigateToFAQ, // FAQScreen 이동 콜백 호출
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.help_outline,
+                                  color: Color(0xFF599468), size: 30),
+                              SizedBox(height: 8),
+                              Text(
+                                '자주 묻는 질문',
+                                style: TextStyle(
+                                    color: Color(0xFF5F5F5F),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 10),
+                      // 고객 문의 버튼
                       Container(
-                        width: 130, // 버튼의 너비
-                        height: 120, // 버튼의 높이
+                        width: 130,
+                        height: 120,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          border: Border.all(color: Colors.green),
+                          border: Border.all(color: Color(0xFF599468)),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.person_outline, color: Colors.green, size: 30),
-                            SizedBox(height: 8),
-                            Text(
-                              '고객 문의',
-                              style: TextStyle(color: Colors.green, fontSize: 14),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                        child: InkWell(
+                          onTap: widget.onNavigateToInquiry, // InquiryScreen 이동 콜백 호출
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.person_outline,
+                                  color: Color(0xFF599468), size: 30),
+                              SizedBox(height: 8),
+                              Text(
+                                '고객 문의',
+                                style: TextStyle(
+                                    color: Color(0xFF5F5F5F),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],

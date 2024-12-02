@@ -24,7 +24,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                side: BorderSide(color: Colors.grey),
+                side: BorderSide(color: Color(0xFFD9D9D9)),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -41,7 +41,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                side: BorderSide(color: Colors.grey),
+                side: BorderSide(color: Color(0xFFD9D9D9)),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -266,7 +266,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      side: BorderSide(color: Colors.grey),
+                      side: BorderSide(color: Color(0xFFD9D9D9)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
