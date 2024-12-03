@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>카카오맵 - 편의점 표시</title>
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fb2fcd617ee4f3c398517a1754dcc775"></script>
+</head>
+<body>
+<div id="map" style="width:500px;height:400px;"></div>
+<script>
+    // 카카오맵 객체 생성
+    var container = document.getElementById('map');
+    var options = {
+        center: new kakao.maps.LatLng(37.5665, 126.978),  // 사용자 주소 위치로 초기 설정
+        level: 3  // 지도 확대/축소 수준
+    };
+    var map = new kakao.maps.Map(container, options);
+
+    // 예시: 편의점 위치 마커 추가 -> 백에서 보내줄 부분
+    var positions = [
+        {lat: 37.5665, lng: 126.978},  // 서울역 근처 편의점
+        {lat: 37.577, lng: 126.98}  // 다른 편의점 위치
+    ];
+
+    for (var i = 0; i < positions.length; i++) {
+        var position = new kakao.maps.LatLng(positions[i].lat, positions[i].lng);
+        var marker = new kakao.maps.Marker({
+            position: position
+        });
+        marker.setMap(map);  // 마커를 지도에 추가
+    }
+</script>
+</body>
+</html>

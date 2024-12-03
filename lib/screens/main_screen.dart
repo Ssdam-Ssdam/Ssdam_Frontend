@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:p_project/screens/search_screen.dart';
 import 'home_screen.dart'; // HomeScreen 경로를 맞추세요
 import 'my_profile_screen.dart'; // MyProfileScreen 경로를 맞추세요
 import 'inquiry_screen.dart'; // InquiryScreen 경로를 맞추세요
@@ -52,8 +53,15 @@ class _MainScreenState extends State<MainScreen> {
           );
           break;
         case 1:
-          _currentScreen = Center(child: Text('검색 화면')); // 검색 화면 예제
+          _currentScreen = SearchScreen(
+            onScreenChange: (newScreen) {
+              setState(() {
+                _currentScreen = newScreen;
+              });
+            },
+          );
           break;
+
         case 2:
           _currentScreen = MyProfileScreen();
           break;

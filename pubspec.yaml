@@ -30,6 +30,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  webview_flutter: ^4.0.7
+
+  url_launcher: ^6.0.20
+  image_picker: ^0.8.7+4
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -61,6 +65,8 @@ flutter:
     - assets/map_placeholder.png
     - assets/profile.png
     - assets/backbutton.png
+    - assets/findbutton.png
+    - assets/kakao_map.html
 
 
 

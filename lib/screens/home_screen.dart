@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 class HomeScreen extends StatefulWidget {
   final VoidCallback onNavigateToInquiry; // InquiryScreen으로 이동하는 콜백
   final VoidCallback onNavigateToFAQ; // FAQScreen으로 이동하는 콜백
