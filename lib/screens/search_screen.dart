@@ -4,8 +4,10 @@ import 'package:image_picker/image_picker.dart';
 
 class SearchScreen extends StatefulWidget {
   final ValueChanged<Widget> onScreenChange; // 새 매개변수 추가
+  final Function(File?) onNavigateToResult; // ResultScreen으로 이동하는 콜백
 
-  SearchScreen({required this.onScreenChange}); // 생성자에 추가
+
+  SearchScreen({required this.onScreenChange, required this.onNavigateToResult});
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
@@ -173,34 +175,24 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: InkWell(
                             onTap: () {
                               if (_selectedImage == null) {
-                                // 이미지가 선택되지 않았을 경우 알림창 띄우기
+                                print('No image selected');
                                 showDialog(
                                   context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: Text('이미지 선택'),
-                                      content: Text('이미지를 먼저 선택해주세요.'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop(); // 알림창 닫기
-                                          },
-                                          child: Text('확인'),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              } else {
-                                // 이미지가 선택되었을 경우 ResultScreen으로 이동
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        ResultScreen(image: _selectedImage),
+                                  builder: (context) => AlertDialog(
+                                    title: Text('이미지 선택'),
+                                    content: Text('이미지를 먼저 선택해주세요.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.of(context).pop(),
+                                        child: Text('확인'),
+                                      ),
+                                    ],
                                   ),
                                 );
+                              } else {
+                                widget.onNavigateToResult(_selectedImage);
                               }
+
                             },
                             child: Image.asset(
                               'assets/findbutton.png', // 여기에 버튼용 이미지 경로를 입력하세요
@@ -216,48 +208,6 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class ResultScreen extends StatelessWidget {
-  final File? image;
-
-  ResultScreen({required this.image});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'AI 분석 결과',
-          style: TextStyle(
-            color: Color(0xFF000000),
-            fontWeight: FontWeight.bold,
-            fontSize: 25,
-          ),
-        ),
-      ),
-      body: Center(
-        child: image != null
-            ? Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.file(
-              image!,
-              height: 200,
-              width: 200,
-              fit: BoxFit.cover,
-            ),
-            SizedBox(height: 20),
-            Text(
-              'OOO님의 대형폐기물은 OO 입니다!',
-              style: TextStyle(fontSize: 18),
-            ),
-          ],
-        )
-            : Text('이미지가 없습니다.', style: TextStyle(fontSize: 18)),
       ),
     );
   }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:p_project/screens/search_screen.dart';
-import 'home_screen.dart'; // HomeScreen 경로를 맞추세요
-import 'my_profile_screen.dart'; // MyProfileScreen 경로를 맞추세요
-import 'inquiry_screen.dart'; // InquiryScreen 경로를 맞추세요
-import 'faq_screen.dart'; // FAQScreen 경로를 맞추세요
+import 'home_screen.dart';
+import 'my_profile_screen.dart';
+import 'search_screen.dart';
+import 'inquiry_screen.dart';
+import 'faq_screen.dart';
+import 'result_screen.dart';
+import 'dart:io';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -15,12 +17,11 @@ class _MainScreenState extends State<MainScreen> {
   Widget _currentScreen = HomeScreen(
     onNavigateToInquiry: () {},
     onNavigateToFAQ: () {}, // 초기화
-  ); // 기본값 설정
+  );
 
   @override
   void initState() {
     super.initState();
-    // 초기 화면 설정
     _currentScreen = HomeScreen(
       onNavigateToInquiry: _navigateToInquiryScreen,
       onNavigateToFAQ: _navigateToFAQScreen,
@@ -30,16 +31,28 @@ class _MainScreenState extends State<MainScreen> {
   // 고객 문의 화면으로 이동
   void _navigateToInquiryScreen() {
     setState(() {
-      _currentScreen = InquiryScreen(); // InquiryScreen을 표시
+      _currentScreen = InquiryScreen();
     });
   }
 
   // FAQ 화면으로 이동
   void _navigateToFAQScreen() {
     setState(() {
-      _currentScreen = FAQScreen(); // FAQScreen을 표시
+      _currentScreen = FAQScreen();
     });
   }
+
+  // ResultScreen으로 이동
+  void _navigateToResultScreen(File? image) {
+    if (image == null) {
+      print('No image provided to ResultScreen');
+      return;
+    }
+    setState(() {
+      _currentScreen = ResultScreen(image: image);
+    });
+  }
+
 
   // 탭 선택 시 호출되는 메서드
   void _onItemTapped(int index) {
@@ -59,6 +72,7 @@ class _MainScreenState extends State<MainScreen> {
                 _currentScreen = newScreen;
               });
             },
+            onNavigateToResult: _navigateToResultScreen,
           );
           break;
 
@@ -73,7 +87,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // 뒤로가기 버튼 제거
+        automaticallyImplyLeading: false,
         title: Image.asset(
           'assets/logo.png',
           height: 28,
@@ -83,7 +97,7 @@ class _MainScreenState extends State<MainScreen> {
         elevation: 0,
         iconTheme: IconThemeData(color: Color(0xFF5F5F5F)),
       ),
-      body: _currentScreen, // 현재 화면 표시
+      body: _currentScreen,
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
@@ -102,7 +116,7 @@ class _MainScreenState extends State<MainScreen> {
         currentIndex: _selectedIndex,
         selectedItemColor: Color(0xFF599468),
         unselectedItemColor: Color(0xFF5F5F5F),
-        onTap: _onItemTapped, // 탭 클릭 이벤트 처리
+        onTap: _onItemTapped,
       ),
     );
   }
