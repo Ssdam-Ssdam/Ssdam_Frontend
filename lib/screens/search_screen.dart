@@ -1,13 +1,20 @@
-import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'dart:convert';
+import 'result_screen.dart';
+import '../secure_storage_util.dart';
 
 class SearchScreen extends StatefulWidget {
-  final ValueChanged<Widget> onScreenChange; // 새 매개변수 추가
-  final Function(File?) onNavigateToResult; // ResultScreen으로 이동하는 콜백
+  final ValueChanged<Widget>? onScreenChange; // 추가
+  final Function(File, String, double, String, String)? onNavigateToResult; // 추가
 
-  SearchScreen({required this.onScreenChange, required this.onNavigateToResult});
+  SearchScreen({
+    this.onScreenChange, // 추가
+    this.onNavigateToResult, // 추가
+  });
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
@@ -16,6 +23,17 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   File? _selectedImage;
 
+  // 토큰 확인 메서드
+  Future<void> checkToken() async {
+    final token = await SecureStorageUtil.getToken();
+    if (token == null) {
+      print("토큰이 없습니다. 로그인 필요.");
+    } else {
+      print("저장된 토큰: $token");
+    }
+  }
+
+  // 이미지 선택 메서드
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: source);
@@ -29,76 +47,76 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> _uploadImage() async {
     if (_selectedImage == null) {
-      // 이미지가 선택되지 않았을 경우 처리
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('이미지 선택'),
-          content: Text('이미지를 먼저 선택해주세요.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('확인'),
-            ),
-          ],
-        ),
-      );
+      _showAlert('이미지를 먼저 선택해주세요.');
       return;
     }
 
-    final String url = "http://10.0.2.2:3000/upload"; // Node.js 서버 URL
-    final request = http.MultipartRequest('POST', Uri.parse(url));
+    final String url = "http://10.0.2.2:3000/lar-waste/upload";
 
     try {
-      // 이미지 파일 첨부
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'image', // 서버에서 받을 필드 이름
-          _selectedImage!.path,
-        ),
-      );
+      final token = await SecureStorageUtil.getToken();
+      if (token == null) {
+        _showAlert('로그인이 필요합니다.');
+        return;
+      }
 
-      // 요청 보내기
+      final request = http.MultipartRequest('POST', Uri.parse(url))
+        ..headers['Authorization'] = 'Bearer $token'
+        ..files.add(await http.MultipartFile.fromPath(
+          'uploadFile',
+          _selectedImage!.path,
+          contentType: MediaType('image', 'jpeg'),
+        ));
+
       final response = await request.send();
 
       if (response.statusCode == 200) {
-        // 성공 처리
-        print("이미지가 성공적으로 업로드되었습니다.");
-        widget.onNavigateToResult(_selectedImage); // 결과 화면으로 이동
-      } else {
-        // 실패 처리
-        print("이미지 업로드 실패. 상태 코드: ${response.statusCode}");
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('업로드 실패'),
-            content: Text('이미지 업로드에 실패했습니다. 상태 코드: ${response.statusCode}'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('확인'),
-              ),
-            ],
+        final responseData = await http.Response.fromStream(response);
+        final Map<String, dynamic> data = json.decode(responseData.body);
+
+        // 서버에서 예상치 못한 null 값이 올 경우 기본값 설정
+        final wasteName = data['waste_name'] ?? 'Unknown';
+        final accuracy = data['accuracy'] ?? 0.0;
+        final imageUrl = data['image'] ?? '';
+        final imgId = data['imgId'] ?? '';
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ResultScreen(
+              image: _selectedImage!,
+              wasteName: wasteName,
+              accuracy: accuracy,
+              imageUrl: imageUrl,
+              imgId: imgId,
+            ),
           ),
         );
+      } else {
+        _showAlert('이미지 업로드 실패: 상태 코드 ${response.statusCode}');
       }
     } catch (error) {
-      // 네트워크 오류 처리
-      print("네트워크 오류: $error");
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('업로드 실패'),
-          content: Text('네트워크 오류가 발생했습니다.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('확인'),
-            ),
-          ],
-        ),
-      );
+      _showAlert('네트워크 오류: $error');
     }
+  }
+
+
+
+  // 알림창 표시 메서드
+  void _showAlert(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('알림'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('확인'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -126,7 +144,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       Column(
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(16), // 모서리를 둥글게 설정 (16px)
+                            borderRadius: BorderRadius.circular(16), // 모서리를 둥글게 설정
                             child: Image.file(
                               _selectedImage!,
                               height: 310,
@@ -150,7 +168,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         child: Text(
                           '이미지를 업로드하고 수수료 찾기 버튼을 클릭하세요',
                           style: TextStyle(fontSize: 18),
-                          textAlign: TextAlign.center, // 텍스트 중앙 정렬
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     SizedBox(height: 20),
@@ -229,7 +247,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: InkWell(
                             onTap: _uploadImage, // 서버로 이미지 업로드
                             child: Image.asset(
-                              'assets/findbutton.png', // 여기에 버튼용 이미지 경로를 입력하세요
+                              'assets/findbutton.png', // 버튼 이미지
                               fit: BoxFit.cover,
                             ),
                           ),

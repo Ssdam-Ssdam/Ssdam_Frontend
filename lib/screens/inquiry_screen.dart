@@ -19,7 +19,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
 
   // 서버에서 문의 데이터 가져오기
   Future<void> _fetchInquiries() async {
-    final String url = "http://10.0.2.2:3000/view-all"; // 서버 URL
+    final String url = "http://10.0.2.2:3000/inquiry/view-all"; // 서버 URL
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../secure_storage_util.dart';
+import 'login_screen.dart';
+
 
 class MyProfileScreen extends StatefulWidget {
   @override
@@ -23,10 +26,19 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   // 프로필 정보 조회 (GET 요청)
   Future<void> _fetchProfile() async {
-    final String url = "http://10.0.2.2:3000/profile"; // Node.js 서버 URL
+    final String url = "http://10.0.2.2:3000/user/profile"; // Node.js 서버 URL
 
     try {
-      final response = await http.get(Uri.parse(url));
+      final token = await SecureStorageUtil.getToken(); // 저장된 토큰 가져오기
+
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "Authorization": "Bearer $token", // 토큰 추가
+          "Content-Type": "application/json",
+        },
+      );
+
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
         setState(() {
@@ -34,6 +46,13 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           _passwordController.text = responseBody['password'];
           _nameController.text = responseBody['name'];
           _emailController.text = responseBody['email'];
+        });
+
+        // 사용자 정보 UI에 반영
+        setState(() {
+          _userIdController.text = responseBody['userId'];
+          _nameController.text = responseBody['name'];
+          _emailController.text = responseBody['address']; // address 추가
         });
       } else {
         print("프로필 정보를 가져오지 못했습니다. 상태 코드: ${response.statusCode}");
@@ -43,9 +62,10 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     }
   }
 
+
 // 프로필 정보 수정 (PUT 요청)
   Future<void> _updateProfile() async {
-    final String url = "http://10.0.2.2:3000/profile/update"; // Node.js 서버 URL
+    final String url = "http://10.0.2.2:3000/user/profile/update"; // Node.js 서버 URL
 
     final String userId = _userIdController.text;
     final String password = _passwordController.text;
@@ -256,6 +276,42 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(width: 20),
+                        Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 50,
+                              backgroundImage: AssetImage('assets/profile.png'),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              _nameController.text, // name 표시
+                              style: TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                          ],
+                        ),
+                        SizedBox(width: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _userIdController.text, // userId 표시
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              'My Location : ${_emailController.text}', // address 표시
+                              style: TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                            SizedBox(height: 30),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: 20),
                     isEditing ? buildEditProfileView() : buildProfileView(),
                   ],
                 ),
@@ -270,9 +326,18 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      print('로그아웃 클릭');
-                      Navigator.pop(context); // 이전 화면으로 돌아가기
+                    onPressed: () async {
+                      // 저장된 토큰 삭제
+                      await SecureStorageUtil.deleteToken();
+
+                      // 로그인 화면으로 이동하면서 이전 화면 스택 제거
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginScreen(), // LoginScreen을 여기에 넣어주세요
+                        ),
+                            (Route<dynamic> route) => false, // 이전 모든 화면 제거
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
@@ -287,6 +352,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       style: TextStyle(color: Colors.black),
                     ),
                   ),
+
                 ],
               ),
             ),

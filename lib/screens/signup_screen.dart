@@ -11,7 +11,7 @@ class SignupScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController(); // 이메일 컨트롤러
 
   Future<void> _register(BuildContext context) async {
-    final String url = "http://10.0.2.2:3000/register"; // Node.js 서버 URL
+    final String url = "http://10.0.2.2:3000/user/register"; // Node.js 서버 URL
     final String userId = _userIdController.text; // 아이디 입력값 가져오기
     final String password = _passwordController.text; // 비밀번호 입력값 가져오기
     final String name = _nameController.text; // 이름 입력값 가져오기

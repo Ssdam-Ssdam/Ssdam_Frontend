@@ -14,14 +14,17 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+
+  // 초기 화면을 홈 화면으로 설정
   Widget _currentScreen = HomeScreen(
     onNavigateToInquiry: () {},
-    onNavigateToFAQ: () {}, // 초기화
+    onNavigateToFAQ: () {},
   );
 
   @override
   void initState() {
     super.initState();
+    // 초기 화면 설정
     _currentScreen = HomeScreen(
       onNavigateToInquiry: _navigateToInquiryScreen,
       onNavigateToFAQ: _navigateToFAQScreen,
@@ -42,17 +45,18 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  // ResultScreen으로 이동
-  void _navigateToResultScreen(File? image) {
-    if (image == null) {
-      print('No image provided to ResultScreen');
-      return;
-    }
+  // ResultScreen으로 이동 (SearchScreen에서 데이터를 전달받아 사용)
+  void _navigateToResultScreen(File image, String wasteName, double accuracy, String imageUrl, String imgId) {
     setState(() {
-      _currentScreen = ResultScreen(image: image);
+      _currentScreen = ResultScreen(
+        image: image,
+        wasteName: wasteName,
+        accuracy: accuracy,
+        imageUrl: imageUrl,
+        imgId: imgId,
+      );
     });
   }
-
 
   // 탭 선택 시 호출되는 메서드
   void _onItemTapped(int index) {
@@ -60,23 +64,25 @@ class _MainScreenState extends State<MainScreen> {
       _selectedIndex = index;
       switch (index) {
         case 0:
+        // 홈 화면
           _currentScreen = HomeScreen(
             onNavigateToInquiry: _navigateToInquiryScreen,
             onNavigateToFAQ: _navigateToFAQScreen,
           );
           break;
         case 1:
+        // 검색 화면
           _currentScreen = SearchScreen(
             onScreenChange: (newScreen) {
               setState(() {
                 _currentScreen = newScreen;
               });
             },
-            onNavigateToResult: _navigateToResultScreen,
+            onNavigateToResult: _navigateToResultScreen, // 결과 화면으로 이동 콜백 설정
           );
           break;
-
         case 2:
+        // 마이페이지
           _currentScreen = MyProfileScreen();
           break;
       }

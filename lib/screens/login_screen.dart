@@ -1,31 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../secure_storage_util.dart';
 
-import 'main_screen.dart'; // MainScreen 경로를 맞추세요
-import 'signup_screen.dart'; // SignupScreen 경로를 맞추세요
+import 'main_screen.dart';
+import 'signup_screen.dart';
 
 class LoginScreen extends StatelessWidget {
-  final TextEditingController _userIdController = TextEditingController(); // userId 컨트롤러
-  final TextEditingController _passwordController = TextEditingController(); // password 컨트롤러
+  final TextEditingController _userIdController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   Future<void> _login(BuildContext context) async {
-    final String url = "http://10.0.2.2:3000/login"; // Node.js 서버 URL
-    final String userId = _userIdController.text; // userId 입력값 가져오기
-    final String password = _passwordController.text; // password 입력값 가져오기
+    final String url = "http://10.0.2.2:3000/user/login";
+    final String userId = _userIdController.text;
+    final String password = _passwordController.text;
 
     try {
       final response = await http.post(
         Uri.parse(url),
         headers: {"Content-Type": "application/json"},
-        body: json.encode({"userId": userId, "password": password}), // userId와 password 전달
+        body: json.encode({"userId": userId, "password": password}),
       );
 
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
 
-        // 서버에서 name 값이 포함된 경우 로그인 성공
-        if (responseBody.containsKey('name') && responseBody['name'] != null) {
+        // 서버에서 name과 token 값이 포함된 경우 로그인 성공
+        if (responseBody.containsKey('name') && responseBody.containsKey('token')) {
+          await SecureStorageUtil.saveToken(responseBody['token']); // 토큰 저장
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -33,19 +35,15 @@ class LoginScreen extends StatelessWidget {
             ),
           );
         } else {
-          // name 값이 없는 경우 로그인 실패
-          _showErrorDialog(context, "아이디와 비밀번호를 다시 입력하세요.");
+          _showErrorDialog(context, "로그인 정보가 유효하지 않습니다.");
         }
       } else {
-        // 서버 에러 처리
-        _showErrorDialog(context, "서버 오류가 발생했습니다. (${response.statusCode})");
+        _showErrorDialog(context, "서버 오류: ${response.statusCode}");
       }
     } catch (error) {
-      // 네트워크 오류 처리
-      _showErrorDialog(context, "네트워크 오류가 발생했습니다.");
+      _showErrorDialog(context, "네트워크 오류 발생: $error");
     }
   }
-
   void _showErrorDialog(BuildContext context, String message) {
     showDialog(
       context: context,
