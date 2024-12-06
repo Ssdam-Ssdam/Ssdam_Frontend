@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class InquiryScreen extends StatefulWidget {
   @override
@@ -6,8 +8,32 @@ class InquiryScreen extends StatefulWidget {
 }
 
 class _InquiryScreenState extends State<InquiryScreen> {
-  // 드롭다운 초기값
-  String selectedValue = '전체';
+  String selectedValue = '전체'; // 드롭다운 초기값
+  List<Map<String, dynamic>> inquiries = []; // 문의 데이터 리스트
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchInquiries(); // 문의 데이터 로드
+  }
+
+  // 서버에서 문의 데이터 가져오기
+  Future<void> _fetchInquiries() async {
+    final String url = "http://10.0.2.2:3000/view-all"; // 서버 URL
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body); // JSON 데이터 파싱
+        setState(() {
+          inquiries = List<Map<String, dynamic>>.from(data);
+        });
+      } else {
+        print("문의 데이터를 가져오지 못했습니다. 상태 코드: ${response.statusCode}");
+      }
+    } catch (error) {
+      print("네트워크 오류: $error");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +53,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
                     height: 40,
                   ),
                 ),
-                Spacer(), // 왼쪽과 가운데 사이에 공간 추가
+                Spacer(),
                 Text(
                   '1:1 문의',
                   style: TextStyle(
@@ -36,10 +62,10 @@ class _InquiryScreenState extends State<InquiryScreen> {
                     fontSize: 25,
                   ),
                 ),
-                Spacer(), // 가운데와 오른쪽 사이에 공간 추가
+                Spacer(),
                 ElevatedButton(
                   onPressed: () {
-                    // 버튼 동작 정의
+                    // 문의하기 버튼 동작 정의
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -56,22 +82,20 @@ class _InquiryScreenState extends State<InquiryScreen> {
                 ),
               ],
             ),
-
-            SizedBox(height: 20), // 아래 내용과의 간격
+            SizedBox(height: 20),
             Row(
               children: [
-                // 드롭다운 버튼
                 Expanded(
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black54), // 테두리
-                      borderRadius: BorderRadius.circular(8.0), // 둥근 모서리
+                      border: Border.all(color: Colors.black54),
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: DropdownButton<String>(
                       value: selectedValue,
-                      isExpanded: true, // 드롭다운 너비를 꽉 채우기
-                      underline: SizedBox(), // 기본 밑줄 제거
+                      isExpanded: true,
+                      underline: SizedBox(),
                       onChanged: (String? newValue) {
                         setState(() {
                           selectedValue = newValue!;
@@ -87,7 +111,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
                           ),
                         );
                       }).toList(),
-                      icon: Icon(Icons.arrow_drop_down), // 드롭다운 아이콘
+                      icon: Icon(Icons.arrow_drop_down),
                     ),
                   ),
                 ),
@@ -96,101 +120,79 @@ class _InquiryScreenState extends State<InquiryScreen> {
             SizedBox(height: 16),
             // 문의 목록
             Expanded(
-              child: ListView(
-                children: [
-                  // 문의 내용 1
-                  Card(
-                    elevation: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: inquiries.isEmpty
+                  ? Center(
+                child: Text(
+                  '문의 내역이 없습니다.',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              )
+                  : ListView.builder(
+                itemCount: inquiries.length,
+                itemBuilder: (context, index) {
+                  final inquiry = inquiries[index];
+                  return Column(
+                    children: [
+                      Card(
+                        elevation: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                '2024.11.25 01:35',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xFFB6B6B6),
-                                ),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  side: BorderSide(color: Color(0xFFD9D9D9)),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    inquiry['created_at'], // 생성 날짜
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0xFFB6B6B6),
+                                    ),
                                   ),
-                                  minimumSize: Size(78, 31),
-                                ),
-                                child: Text(
-                                  '진행중',
-                                  style: TextStyle(fontSize: 15,color: Color(0xFFCDB72A)),
-                                ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // 상태 버튼 동작 정의
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      side: BorderSide(
+                                          color: Color(0xFFD9D9D9)),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(20),
+                                      ),
+                                      minimumSize: Size(78, 31),
+                                    ),
+                                    child: Text(
+                                      index % 2 == 0
+                                          ? '진행중'
+                                          : '답변완료', // 상태
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: index % 2 == 0
+                                            ? Color(0xFFCDB72A) // 진행중
+                                            : Color(0xFF25A52D), // 답변완료
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 7),
+                              Text(
+                                inquiry['title'], // 제목
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.black),
                               ),
                             ],
                           ),
-                          SizedBox(height: 7), // 날짜/버튼과 아래 텍스트 사이의 간격
-                          Text(
-                            '스티커 판매점 정보를 지도에서 확인하려면 어떻게 해야 하나요?',
-                            style: TextStyle(fontSize: 18, color: Colors.black),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                  Divider(),
-                  // 문의 내용 2
-                  Card(
-                    elevation: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '2024.10.30 15:35',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xFFB6B6B6),
-                                ),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  side: BorderSide(color: Color(0xFFD9D9D9)),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  minimumSize: Size(78, 31),
-                                ),
-                                child: Text(
-                                  '답변완료',
-                                  style: TextStyle(fontSize: 15,color: Color(0xFF25A52D)),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 7), // 날짜/버튼과 아래 텍스트 사이의 간격
-                          Text(
-                            '폐가전 무상수거 링크가 클릭되지 않습니다.',
-                            style: TextStyle(fontSize: 18, color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Divider(),
-                ],
+                      Divider(),
+                    ],
+                  );
+                },
               ),
             ),
           ],

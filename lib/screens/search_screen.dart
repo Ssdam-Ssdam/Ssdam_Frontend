@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 class SearchScreen extends StatefulWidget {
   final ValueChanged<Widget> onScreenChange; // 새 매개변수 추가
   final Function(File?) onNavigateToResult; // ResultScreen으로 이동하는 콜백
-
 
   SearchScreen({required this.onScreenChange, required this.onNavigateToResult});
 
@@ -24,6 +24,80 @@ class _SearchScreenState extends State<SearchScreen> {
       setState(() {
         _selectedImage = File(pickedFile.path);
       });
+    }
+  }
+
+  Future<void> _uploadImage() async {
+    if (_selectedImage == null) {
+      // 이미지가 선택되지 않았을 경우 처리
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('이미지 선택'),
+          content: Text('이미지를 먼저 선택해주세요.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('확인'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    final String url = "http://10.0.2.2:3000/upload"; // Node.js 서버 URL
+    final request = http.MultipartRequest('POST', Uri.parse(url));
+
+    try {
+      // 이미지 파일 첨부
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image', // 서버에서 받을 필드 이름
+          _selectedImage!.path,
+        ),
+      );
+
+      // 요청 보내기
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        // 성공 처리
+        print("이미지가 성공적으로 업로드되었습니다.");
+        widget.onNavigateToResult(_selectedImage); // 결과 화면으로 이동
+      } else {
+        // 실패 처리
+        print("이미지 업로드 실패. 상태 코드: ${response.statusCode}");
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('업로드 실패'),
+            content: Text('이미지 업로드에 실패했습니다. 상태 코드: ${response.statusCode}'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('확인'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (error) {
+      // 네트워크 오류 처리
+      print("네트워크 오류: $error");
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('업로드 실패'),
+          content: Text('네트워크 오류가 발생했습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('확인'),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -63,7 +137,6 @@ class _SearchScreenState extends State<SearchScreen> {
                           SizedBox(height: 20),
                         ],
                       )
-
                     else
                       Container(
                         width: 310,
@@ -81,32 +154,14 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ),
                     SizedBox(height: 20),
-
                     Row(
                       children: [
-                        // 갤러리와 카메라 버튼을 컨테이너로 변경
                         Expanded(
                           child: Column(
                             children: [
-                              // 갤러리 버튼 (기능 없음)
+                              // 갤러리 버튼
                               InkWell(
-                                onTap: () {
-                                  // 갤러리 버튼 클릭 시 아무 동작도 하지 않음
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: Text('기능 미지원'),
-                                      content: Text('갤러리 버튼은 비활성화되었습니다.'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(),
-                                          child: Text('확인'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
+                                onTap: () => _pickImage(ImageSource.gallery),
                                 child: Container(
                                   width: 150,
                                   height: 80,
@@ -134,7 +189,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 ),
                               ),
                               SizedBox(height: 20),
-                              // 카메라 버튼 (기능 유지)
+                              // 카메라 버튼
                               InkWell(
                                 onTap: () => _pickImage(ImageSource.camera),
                                 child: Container(
@@ -167,33 +222,12 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                         ),
                         SizedBox(width: 20),
-                        // 수수료 찾기 버튼 오른쪽 정렬
+                        // 수수료 찾기 버튼
                         Container(
                           width: 150,
                           height: 120,
-                          margin: EdgeInsets.only(right: 20), // 오른쪽에 20px 여백 추가
                           child: InkWell(
-                            onTap: () {
-                              if (_selectedImage == null) {
-                                print('No image selected');
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Text('이미지 선택'),
-                                    content: Text('이미지를 먼저 선택해주세요.'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.of(context).pop(),
-                                        child: Text('확인'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              } else {
-                                widget.onNavigateToResult(_selectedImage);
-                              }
-
-                            },
+                            onTap: _uploadImage, // 서버로 이미지 업로드
                             child: Image.asset(
                               'assets/findbutton.png', // 여기에 버튼용 이미지 경로를 입력하세요
                               fit: BoxFit.cover,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onNavigateToInquiry; // InquiryScreen으로 이동하는 콜백
@@ -25,6 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late PageController _pageController;
   int currentPage = 0;
 
+  String? homeMessage; // 홈 화면 데이터를 저장할 변수
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +40,28 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(Duration(seconds: 3), _autoScroll);
     });
+
+    // 홈 데이터 로드
+    _fetchHomeData();
+  }
+
+  // 홈 화면 데이터 가져오기
+  Future<void> _fetchHomeData() async {
+    final String url = "http://10.0.2.2:3000/"; // Node.js 서버 URL
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        setState(() {
+          homeMessage = responseBody['message'];
+        });
+      } else {
+        print("홈 화면 데이터를 가져오지 못했습니다. 상태 코드: ${response.statusCode}");
+      }
+    } catch (error) {
+      print("네트워크 오류: $error");
+    }
   }
 
   void _autoScroll() {
@@ -70,6 +95,19 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              // 홈 화면 데이터 출력
+              if (homeMessage != null)
+                Text(
+                  homeMessage!,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF599468),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              SizedBox(height: 20),
+
               // 배너 슬라이더
               SizedBox(
                 width: 350,

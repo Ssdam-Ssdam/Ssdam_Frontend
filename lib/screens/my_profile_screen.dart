@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class MyProfileScreen extends StatefulWidget {
   @override
@@ -7,6 +9,74 @@ class MyProfileScreen extends StatefulWidget {
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
   bool isEditing = false; // 현재 프로필 수정 화면인지 여부
+
+  final TextEditingController _userIdController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProfile(); // 프로필 정보 로드
+  }
+
+  // 프로필 정보 조회 (GET 요청)
+  Future<void> _fetchProfile() async {
+    final String url = "http://10.0.2.2:3000/profile"; // Node.js 서버 URL
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        setState(() {
+          _userIdController.text = responseBody['userId'];
+          _passwordController.text = responseBody['password'];
+          _nameController.text = responseBody['name'];
+          _emailController.text = responseBody['email'];
+        });
+      } else {
+        print("프로필 정보를 가져오지 못했습니다. 상태 코드: ${response.statusCode}");
+      }
+    } catch (error) {
+      print("네트워크 오류: $error");
+    }
+  }
+
+// 프로필 정보 수정 (PUT 요청)
+  Future<void> _updateProfile() async {
+    final String url = "http://10.0.2.2:3000/profile/update"; // Node.js 서버 URL
+
+    final String userId = _userIdController.text;
+    final String password = _passwordController.text;
+    final String name = _nameController.text;
+    final String email = _emailController.text;
+
+    try {
+      final response = await http.put(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "userId": userId,
+          "password": password,
+          "name": name,
+          "email": email,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print("프로필 정보가 성공적으로 업데이트되었습니다.");
+        setState(() {
+          isEditing = false; // 수정 화면에서 프로필 화면으로 전환
+        });
+        _fetchProfile(); // 업데이트 후 프로필 정보 다시 로드
+      } else {
+        print("프로필 수정 실패. 상태 코드: ${response.statusCode}");
+      }
+    } catch (error) {
+      print("네트워크 오류: $error");
+    }
+  }
 
   // 프로필 화면 위젯
   Widget buildProfileView() {
@@ -82,6 +152,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextField(
+                controller: _userIdController, // userId 컨트롤러 연결
                 decoration: InputDecoration(
                   hintText: '아이디',
                   border: OutlineInputBorder(
@@ -94,6 +165,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               ),
               SizedBox(height: 20),
               TextField(
+                controller: _passwordController, // password 컨트롤러 연결
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: '비밀번호',
@@ -107,6 +179,20 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               ),
               SizedBox(height: 20),
               TextField(
+                controller: _nameController, // name 컨트롤러 연결
+                decoration: InputDecoration(
+                  hintText: '이름',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Color(0xFFF5F5F5),
+                ),
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: _emailController, // email 컨트롤러 연결
                 decoration: InputDecoration(
                   hintText: '이메일',
                   border: OutlineInputBorder(
@@ -117,41 +203,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   fillColor: Color(0xFFF5F5F5),
                 ),
               ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: '주소',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Color(0xFFF5F5F5),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      print('주소 검색 버튼 클릭');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[350],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      minimumSize: Size(60, 50),
-                    ),
-                    child: Icon(
-                      Icons.search,
-                      color: Color(0xFF599468),
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
         ),
@@ -160,11 +211,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  isEditing = false; // 프로필 화면으로 전환
-                });
-              },
+              onPressed: _updateProfile, // 프로필 수정 버튼 클릭 시 API 호출
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 side: BorderSide(color: Colors.grey),
@@ -209,43 +256,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(width: 20),
-                        Column(
-                          children: [
-                            CircleAvatar(
-                              radius: 50,
-                              backgroundImage: AssetImage('assets/profile.png'),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              'yukyoung',
-                              style: TextStyle(fontSize: 15, color: Colors.black),
-                            ),
-                          ],
-                        ),
-                        SizedBox(width: 20),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'beloveuuu',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              'My Location : 성남시 수정구',
-                              style: TextStyle(fontSize: 15, color: Colors.black),
-                            ),
-                            SizedBox(height: 30),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    // 화면에 따라 동적으로 변경되는 부분
                     isEditing ? buildEditProfileView() : buildProfileView(),
                   ],
                 ),
