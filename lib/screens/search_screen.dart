@@ -8,12 +8,12 @@ import 'result_screen.dart';
 import '../secure_storage_util.dart';
 
 class SearchScreen extends StatefulWidget {
-  final ValueChanged<Widget>? onScreenChange; // 추가
-  final Function(File, String, double, String, String)? onNavigateToResult; // 추가
+  final ValueChanged<Widget>? onScreenChange; // 화면 전환 콜백
+  final Function(File, String, double, String, String, String)? onNavigateToResult; // 결과 화면 이동 콜백
 
   SearchScreen({
-    this.onScreenChange, // 추가
-    this.onNavigateToResult, // 추가
+    this.onScreenChange,
+    this.onNavigateToResult,
   });
 
   @override
@@ -22,16 +22,6 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   File? _selectedImage;
-
-  // 토큰 확인 메서드
-  Future<void> checkToken() async {
-    final token = await SecureStorageUtil.getToken();
-    if (token == null) {
-      print("토큰이 없습니다. 로그인 필요.");
-    } else {
-      print("저장된 토큰: $token");
-    }
-  }
 
   // 이미지 선택 메서드
   Future<void> _pickImage(ImageSource source) async {
@@ -45,6 +35,7 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
+  // 이미지 업로드 및 결과 화면으로 이동
   Future<void> _uploadImage() async {
     if (_selectedImage == null) {
       _showAlert('이미지를 먼저 선택해주세요.');
@@ -72,26 +63,35 @@ class _SearchScreenState extends State<SearchScreen> {
 
       if (response.statusCode == 200) {
         final responseData = await http.Response.fromStream(response);
+        print('Response Body: ${responseData.body}');
         final Map<String, dynamic> data = json.decode(responseData.body);
+        print('Parsed Data: $data');
 
-        // 서버에서 예상치 못한 null 값이 올 경우 기본값 설정
-        final wasteName = data['waste_name'] ?? 'Unknown';
-        final accuracy = data['accuracy'] ?? 0.0;
-        final imageUrl = data['image'] ?? '';
-        final imgId = data['imgId'] ?? '';
+        // 중첩된 img 객체 접근
+        final imgData = data['img'] ?? {};
+        final wasteName = imgData['waste_name'] ?? 'Unknown';
+        final accuracy = imgData['accuracy'] ?? 0.0;
+        final imageUrl = imgData['file_path'] ?? '';
+        final imgId = (imgData['imgId'] ?? '').toString();
+        final userId = (imgData['userId'] ?? '').toString();
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ResultScreen(
-              image: _selectedImage!,
-              wasteName: wasteName,
-              accuracy: accuracy,
-              imageUrl: imageUrl,
-              imgId: imgId,
-            ),
-          ),
-        );
+
+        print('Waste Name: $wasteName');
+        print('Accuracy: $accuracy');
+        print('Image URL: $imageUrl');
+        print('Img ID: $imgId');
+
+        // 콜백 호출로 ResultScreen으로 이동
+        if (widget.onNavigateToResult != null) {
+          widget.onNavigateToResult!(
+            _selectedImage!,
+            wasteName,
+            accuracy,
+            imageUrl,
+            imgId,
+            userId,
+          );
+        }
       } else {
         _showAlert('이미지 업로드 실패: 상태 코드 ${response.statusCode}');
       }
@@ -99,8 +99,6 @@ class _SearchScreenState extends State<SearchScreen> {
       _showAlert('네트워크 오류: $error');
     }
   }
-
-
 
   // 알림창 표시 메서드
   void _showAlert(String message) {
@@ -137,14 +135,13 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                 ),
                 SizedBox(height: 20),
-                // 이미지 업로드 및 결과 보기
                 Column(
                   children: [
                     if (_selectedImage != null)
                       Column(
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(16), // 모서리를 둥글게 설정
+                            borderRadius: BorderRadius.circular(16),
                             child: Image.file(
                               _selectedImage!,
                               height: 310,
@@ -177,7 +174,6 @@ class _SearchScreenState extends State<SearchScreen> {
                         Expanded(
                           child: Column(
                             children: [
-                              // 갤러리 버튼
                               InkWell(
                                 onTap: () => _pickImage(ImageSource.gallery),
                                 child: Container(
@@ -207,7 +203,6 @@ class _SearchScreenState extends State<SearchScreen> {
                                 ),
                               ),
                               SizedBox(height: 20),
-                              // 카메라 버튼
                               InkWell(
                                 onTap: () => _pickImage(ImageSource.camera),
                                 child: Container(
@@ -240,14 +235,13 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                         ),
                         SizedBox(width: 20),
-                        // 수수료 찾기 버튼
                         Container(
                           width: 150,
                           height: 120,
                           child: InkWell(
-                            onTap: _uploadImage, // 서버로 이미지 업로드
+                            onTap: _uploadImage,
                             child: Image.asset(
-                              'assets/findbutton.png', // 버튼 이미지
+                              'assets/findbutton.png',
                               fit: BoxFit.cover,
                             ),
                           ),

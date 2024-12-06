@@ -15,7 +15,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  // 초기 화면을 홈 화면으로 설정
+  // 현재 화면을 관리하는 변수
   Widget _currentScreen = HomeScreen(
     onNavigateToInquiry: () {},
     onNavigateToFAQ: () {},
@@ -46,7 +46,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   // ResultScreen으로 이동 (SearchScreen에서 데이터를 전달받아 사용)
-  void _navigateToResultScreen(File image, String wasteName, double accuracy, String imageUrl, String imgId) {
+  void _navigateToResultScreen(File image, String wasteName, double accuracy, String imageUrl, String imgId, String userId) {
     setState(() {
       _currentScreen = ResultScreen(
         image: image,
@@ -54,6 +54,21 @@ class _MainScreenState extends State<MainScreen> {
         accuracy: accuracy,
         imageUrl: imageUrl,
         imgId: imgId,
+        userId: userId,
+      );
+    });
+  }
+
+  // 검색 화면으로 이동
+  void _navigateToSearchScreen() {
+    setState(() {
+      _currentScreen = SearchScreen(
+        onScreenChange: (newScreen) {
+          setState(() {
+            _currentScreen = newScreen;
+          });
+        },
+        onNavigateToResult: _navigateToResultScreen, // 결과 화면으로 이동 콜백 설정
       );
     });
   }
@@ -72,14 +87,7 @@ class _MainScreenState extends State<MainScreen> {
           break;
         case 1:
         // 검색 화면
-          _currentScreen = SearchScreen(
-            onScreenChange: (newScreen) {
-              setState(() {
-                _currentScreen = newScreen;
-              });
-            },
-            onNavigateToResult: _navigateToResultScreen, // 결과 화면으로 이동 콜백 설정
-          );
+          _navigateToSearchScreen();
           break;
         case 2:
         // 마이페이지

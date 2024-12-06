@@ -17,6 +17,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _sim_addressController = TextEditingController();
 
   @override
   void initState() {
@@ -41,18 +43,16 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
-        setState(() {
-          _userIdController.text = responseBody['userId'];
-          _passwordController.text = responseBody['password'];
-          _nameController.text = responseBody['name'];
-          _emailController.text = responseBody['email'];
-        });
 
         // 사용자 정보 UI에 반영
         setState(() {
+          //userId, password, name, email, address(전체주소), sim_address(시,구)
           _userIdController.text = responseBody['userId'];
           _nameController.text = responseBody['name'];
-          _emailController.text = responseBody['address']; // address 추가
+          _addressController.text = responseBody['address'];
+          _sim_addressController.text = responseBody['sim_address'];
+          _passwordController.text = responseBody['password'];
+          _emailController.text = responseBody['email'];
         });
       } else {
         print("프로필 정보를 가져오지 못했습니다. 상태 코드: ${response.statusCode}");
@@ -212,7 +212,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               ),
               SizedBox(height: 20),
               TextField(
-                controller: _emailController, // email 컨트롤러 연결
+                controller: _addressController, // email 컨트롤러 연결
                 decoration: InputDecoration(
                   hintText: '이메일',
                   border: OutlineInputBorder(
@@ -302,7 +302,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              'My Location : ${_emailController.text}', // address 표시
+                              'My Location : ${_sim_addressController.text}', // address 표시
                               style: TextStyle(fontSize: 15, color: Colors.black),
                             ),
                             SizedBox(height: 30),
