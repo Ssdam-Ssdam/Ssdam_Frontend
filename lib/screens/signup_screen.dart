@@ -7,15 +7,25 @@ import 'login_screen.dart'; // LoginScreen 경로를 맞추세요
 class SignupScreen extends StatelessWidget {
   final TextEditingController _userIdController = TextEditingController(); // 아이디 컨트롤러
   final TextEditingController _passwordController = TextEditingController(); // 비밀번호 컨트롤러
+  final TextEditingController _confirmPasswordController = TextEditingController(); // 비밀번호 확인 컨트롤러
   final TextEditingController _nameController = TextEditingController(); // 이름 컨트롤러
   final TextEditingController _emailController = TextEditingController(); // 이메일 컨트롤러
+  final TextEditingController _addressController = TextEditingController(); // 주소 컨트롤러
 
   Future<void> _register(BuildContext context) async {
-    final String url = "http://10.0.2.2:3000/user/register"; // Node.js 서버 URL
-    final String userId = _userIdController.text; // 아이디 입력값 가져오기
-    final String password = _passwordController.text; // 비밀번호 입력값 가져오기
-    final String name = _nameController.text; // 이름 입력값 가져오기
-    final String email = _emailController.text; // 이메일 입력값 가져오기
+    final String url = "http://10.0.2.2:3000/register"; // Node.js 서버 URL
+    final String userId = _userIdController.text.trim(); // 아이디 입력값 가져오기
+    final String password = _passwordController.text.trim(); // 비밀번호 입력값 가져오기
+    final String confirmPassword = _confirmPasswordController.text.trim(); // 비밀번호 확인
+    final String name = _nameController.text.trim(); // 이름 입력값 가져오기
+    final String email = _emailController.text.trim(); // 이메일 입력값 가져오기
+    final String address = _addressController.text.trim(); // 주소 입력값 가져오기
+
+    if (password != confirmPassword) {
+      // 비밀번호와 비밀번호 확인이 일치하지 않을 경우 알림창 표시
+      _showErrorDialog(context, "비밀번호가 일치하지 않습니다.");
+      return;
+    }
 
     try {
       final response = await http.post(
@@ -26,6 +36,7 @@ class SignupScreen extends StatelessWidget {
           "password": password,
           "name": name,
           "email": email,
+          "address": address,
         }),
       );
 
@@ -72,7 +83,6 @@ class SignupScreen extends StatelessWidget {
       resizeToAvoidBottomInset: true, // 키보드가 나타날 때 화면 크기 조정
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        // 스크롤 가능하도록 전체 감싸기
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0), // 양옆 여백 추가
           child: Column(
@@ -91,9 +101,10 @@ class SignupScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 40),
+
               // 아이디 입력 필드
               TextField(
-                controller: _userIdController, // userId 컨트롤러
+                controller: _userIdController,
                 decoration: InputDecoration(
                   hintText: '아이디',
                   border: OutlineInputBorder(
@@ -108,7 +119,7 @@ class SignupScreen extends StatelessWidget {
 
               // 비밀번호 입력 필드
               TextField(
-                controller: _passwordController, // password 컨트롤러
+                controller: _passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: '비밀번호',
@@ -122,9 +133,25 @@ class SignupScreen extends StatelessWidget {
               ),
               SizedBox(height: 20),
 
+              // 비밀번호 확인 입력 필드
+              TextField(
+                controller: _confirmPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  hintText: '비밀번호 확인',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Color(0xFFF5F5F5),
+                ),
+              ),
+              SizedBox(height: 20),
+
               // 이름 입력 필드
               TextField(
-                controller: _nameController, // name 컨트롤러
+                controller: _nameController,
                 decoration: InputDecoration(
                   hintText: '이름',
                   border: OutlineInputBorder(
@@ -139,7 +166,7 @@ class SignupScreen extends StatelessWidget {
 
               // 이메일 입력 필드
               TextField(
-                controller: _emailController, // email 컨트롤러
+                controller: _emailController,
                 decoration: InputDecoration(
                   hintText: '이메일',
                   border: OutlineInputBorder(
@@ -149,6 +176,45 @@ class SignupScreen extends StatelessWidget {
                   filled: true,
                   fillColor: Color(0xFFF5F5F5),
                 ),
+              ),
+              SizedBox(height: 20),
+
+              // 주소 입력 필드
+              // 주소 입력 필드 + 검색 버튼
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _addressController,
+                      decoration: InputDecoration(
+                        hintText: '주소',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Color(0xFFF5F5F5),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      print('주소 검색 버튼 클릭');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[350],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      minimumSize: Size(60, 50),
+                    ),
+                    child: Icon(
+                      Icons.search,
+                      color: Color(0xFF599468),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 30),
 

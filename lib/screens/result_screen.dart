@@ -70,7 +70,7 @@ class _ResultScreenState extends State<ResultScreen> {
       // 이미지 추가
       request.files.add(
         await http.MultipartFile.fromPath(
-          'image', // 서버에서 받을 필드 이름
+          'uploadFile', // 서버에서 받을 필드 이름
           widget.image!.path,
         ),
       );
@@ -114,9 +114,9 @@ class _ResultScreenState extends State<ResultScreen> {
           "Content-Type": "application/json",
         },
         body: jsonEncode({
-          'imgId': widget.imgId, // 이미지 ID 전달
+          'imgId': widget.imgId, // 이미지 ID 전달**fix**
           'is_good': isGood, // 좋아요/싫어요 상태 전달
-          'waste_name': widget.wasteName, // 폐기물 이름 전달
+          'waste_name': _wasteName, // 폐기물 이름 전달
         }),
       );
 
@@ -198,13 +198,21 @@ class _ResultScreenState extends State<ResultScreen> {
                     ),
                     SizedBox(height: 20),
                     Text(
-                      widget.userId+'님의 대형폐기물은 <'+widget.wasteName+'> 입니다!', // "쇼파" 출력
+                      '대형폐기물은 <$_wasteName> 입니다!', // "쇼파" 출력
                       style: TextStyle(
                         fontSize: 18,
                         color: Color(0xFF5F5F5F),
                       ),
                     ),
                     SizedBox(height: 20),
+                    /*Text(
+                      '정확도: ${_accuracy != null ? (_accuracy! * 100).toStringAsFixed(2) + '%': '정보 없음'}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF333333),
+                      ),
+                    ),*/
                     Text(
                       '결과 확인',
                       style: TextStyle(
@@ -223,7 +231,7 @@ class _ResultScreenState extends State<ResultScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(widget.wasteName,
+                          Text('$_wasteName',
                               style:
                               TextStyle(fontWeight: FontWeight.bold)),
                           SizedBox(height: 10),

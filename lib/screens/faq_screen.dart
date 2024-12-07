@@ -33,38 +33,57 @@ class _FAQScreenState extends State<FAQScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
+        leading: GestureDetector(
+          onTap: () {
+            // 뒤로 가기 동작
+          },
+          child: Container(
+            height: 30, // 전체 컨테이너 높이
+            width: 30,  // 전체 컨테이너 너비
+            child: Image.asset(
+              'assets/backbutton.png',
+              fit: BoxFit.contain, // 이미지 비율 유지하며 축소
+            ),
+          ),
+        ),
+
         title: Text(
           '자주 묻는 질문',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
         ),
-        iconTheme: IconThemeData(color: Colors.black),
         centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
-      body: ListView.builder(
-        itemCount: faqs.length,
-        itemBuilder: (context, index) {
-          return Card(
-            margin: EdgeInsets.symmetric(vertical: 8.0),
-            child: ExpansionTile(
-              title: Text(
-                faqs[index]['question']!,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    faqs[index]['answer']!,
-                    style: TextStyle(fontSize: 14, color: Colors.black87),
-                  ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+          itemCount: faqs.length,
+          itemBuilder: (context, index) {
+            return Card(
+              margin: EdgeInsets.symmetric(vertical: 8.0),
+              child: ExpansionTile(
+                title: Text(
+                  faqs[index]['question']!,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-              ],
-            ),
-          );
-        },
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      faqs[index]['answer']!,
+                      style: TextStyle(fontSize: 14, color: Colors.black87),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
