@@ -36,6 +36,7 @@ class _ResultScreenState extends State<ResultScreen> {
   bool _isButtonClicked = false; // 좋아요/싫어요 버튼 클릭 여부
   String? _wasteName; // 서버에서 받아온 폐기물 이름
   double? _accuracy; // 서버에서 받아온 정확도
+  String? _imgId;
   String? _errorMessage;
 
 
@@ -81,11 +82,14 @@ class _ResultScreenState extends State<ResultScreen> {
         final data = jsonDecode(responseData.body);
 
         print("서버 응답 데이터: $data");
+        print("imgId 값: ${data['imgId'].toString()}");
+
 
         // JSON 데이터에서 waste_name과 accuracy를 가져와 UI에 반영
         setState(() {
           _wasteName = data['waste_name'];
           _accuracy = data['accuracy'];
+          _imgId = data['imgId'].toString(); // 이미지 ID를 문자열로 저장
         });
       } else {
         setState(() {
@@ -107,6 +111,8 @@ class _ResultScreenState extends State<ResultScreen> {
     try {
       final token = await SecureStorageUtil.getToken(); // 저장된 토큰 가져오기
 
+      print('imgId : $_imgId');
+
       final response = await http.post(
         Uri.parse(url),
         headers: {
@@ -114,7 +120,7 @@ class _ResultScreenState extends State<ResultScreen> {
           "Content-Type": "application/json",
         },
         body: jsonEncode({
-          'imgId': widget.imgId, // 이미지 ID 전달**fix**
+          'imgId': _imgId, // 이미지 ID 전달**fix**
           'is_good': isGood, // 좋아요/싫어요 상태 전달
           'waste_name': _wasteName, // 폐기물 이름 전달
         }),
@@ -231,7 +237,7 @@ class _ResultScreenState extends State<ResultScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('$_wasteName',
+                          Text('$_wasteName, $_imgId',
                               style:
                               TextStyle(fontWeight: FontWeight.bold)),
                           SizedBox(height: 10),
