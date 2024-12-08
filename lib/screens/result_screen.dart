@@ -6,7 +6,6 @@ import '../secure_storage_util.dart';
 import 'main_screen.dart';
 
 
-
 class ResultScreen extends StatefulWidget {
   final File? image;
   final String wasteName;
@@ -38,6 +37,7 @@ class _ResultScreenState extends State<ResultScreen> {
   double? _accuracy; // 서버에서 받아온 정확도
   String? _imgId;
   String? _errorMessage;
+  List<Map<String, dynamic>> _wasteFees = []; // waste_fees 데이터 저장 리스트
 
 
   @override
@@ -90,6 +90,12 @@ class _ResultScreenState extends State<ResultScreen> {
           _wasteName = data['waste_name'];
           _accuracy = data['accuracy'];
           _imgId = data['imgId'].toString(); // 이미지 ID를 문자열로 저장
+          _wasteFees = List<Map<String, dynamic>>.from(data['waste_fees'].map((fee) {
+            return {
+              'waste_standard': fee['waste_standard'],
+              'fee': fee['fee'],
+            };
+          }));
         });
       } else {
         setState(() {
@@ -228,32 +234,46 @@ class _ResultScreenState extends State<ResultScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.green),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('$_wasteName, $_imgId',
-                              style:
-                              TextStyle(fontWeight: FontWeight.bold)),
-                          SizedBox(height: 10),
-                          Text(
-                              '가로 50cm 이하, 세로 50cm 이하       1,000원'),
-                          Text(
-                              '가로 50cm 이하, 세로 100cm 이하      2,000원'),
-                          Text(
-                              '가로 90cm 이하, 세로 110cm 이하      3,000원'),
-                          Text(
-                              '가로 100cm 이하, 세로 150cm 이하     5,000원'),
-                          Text(
-                              '가로 100cm 이하, 세로 180cm 이하     7,000원'),
-                        ],
-                      ),
+                    Table(
+                      border: TableBorder.all(color: Colors.green),
+                      children: [
+                        // 헤더 행 추가
+                        TableRow(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                '폐기물 기준',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                '요금',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // 데이터 행 추가
+                        ..._wasteFees.map((fee) {
+                          return TableRow(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(fee['waste_standard'], style: TextStyle(fontSize: 16)),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('${fee['fee']}원', style: TextStyle(fontSize: 16)),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                      ],
                     ),
+
                     SizedBox(height: 20),
                     Text(
                       '결과에 만족하셨나요?',
