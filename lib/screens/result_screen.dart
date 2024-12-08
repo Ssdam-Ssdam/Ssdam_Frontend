@@ -110,7 +110,6 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
 
-
   Future<void> _sendFeedback(int isGood) async {
     final String url = "http://10.0.2.2:3000/lar-waste/feedback"; // 서버 URL
 
@@ -134,14 +133,17 @@ class _ResultScreenState extends State<ResultScreen> {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        _showAlert("피드백이 성공적으로 전송되었습니다: ${responseData['message']}");
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MainScreen(),
-          ),
-              (route) => false, // 기존 화면 제거
-        );      } else {
+        _showAlert("피드백이 성공적으로 전송되었습니다!");
+        Future.delayed(Duration(seconds: 1), () {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MainScreen(),
+            ),
+                (route) => false, // 기존 화면 제거
+          );
+        });
+      } else {
         _showAlert("피드백 전송 실패. 상태 코드: ${response.statusCode}");
       }
     } catch (error) {
@@ -151,20 +153,23 @@ class _ResultScreenState extends State<ResultScreen> {
 
 
   void _showAlert(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('알림'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('확인'),
-          ),
-        ],
-      ),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('알림'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('확인'),
+            ),
+          ],
+        ),
+      );
+    });
   }
+
 
   void _handleSubmit() {
     if (!_isButtonClicked) {
@@ -285,8 +290,12 @@ class _ResultScreenState extends State<ResultScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
-                          icon: Icon(Icons.thumb_up,
-                              color: Color(0xFF5F5F5F)),
+                          icon: Icon(
+                            Icons.thumb_up,
+                            color: _isLike && _isButtonClicked
+                                ? Color(0xFF6C6C6C) // 눌렀을 때 아이콘 색상
+                                : Color(0xFFC7E5B5), // 디폴트 아이콘 색상 (하얀색)
+                          ),
                           iconSize: 35,
                           onPressed: () {
                             setState(() {
@@ -297,9 +306,14 @@ class _ResultScreenState extends State<ResultScreen> {
                           },
                         ),
                         SizedBox(width: 20),
+                        // 싫어요 버튼
                         IconButton(
-                          icon: Icon(Icons.thumb_down,
-                              color: Color(0xFF5F5F5F)),
+                          icon: Icon(
+                            Icons.thumb_down,
+                            color: !_isLike && _isButtonClicked
+                                ? Color(0xFF6C6C6C) // 눌렀을 때 아이콘 색상
+                                : Color(0xFFC7E5B5), // 디폴트 아이콘 색상 (하얀색)
+                          ),
                           iconSize: 35,
                           onPressed: () {
                             setState(() {
