@@ -41,6 +41,9 @@ class _ResultScreenState extends State<ResultScreen> {
   String? _imgId;
   String? _errorMessage;
   List<Map<String, dynamic>> _wasteFees = []; // waste_fees 데이터 저장 리스트
+  TextEditingController _searchController = TextEditingController();
+  List<Map<String, dynamic>> _searchResults = [];
+  bool _isLoading = false; // 검색 로딩 상태
 
   @override
   void initState() {
@@ -90,10 +93,16 @@ class _ResultScreenState extends State<ResultScreen> {
     Future<void> _sendFeedback(int isGood) async {
     final String url = "http://10.0.2.2:3000/lar-waste/feedback"; // 서버 URL
 
+    // 피드백을 보내기 전에 waste_name을 결정
+    String feedbackWasteName = _wasteName!;  // 기본적으로 AI 분류 결과의 waste_name 사용
+
+    // 싫어요가 클릭되었고 사용자가 검색한 결과가 있다면
+    if (!_isLike && _searchResults.isNotEmpty) {
+      feedbackWasteName = _searchResults[0]['waste_name'];
+    }
+
     try {
       final token = await SecureStorageUtil.getToken(); // 저장된 토큰 가져오기
-
-      print('imgId : $_imgId');
 
       final response = await http.post(
         Uri.parse(url),
@@ -104,7 +113,7 @@ class _ResultScreenState extends State<ResultScreen> {
         body: jsonEncode({
           'imgId': _imgId, // 이미지 ID 전달**fix**
           'is_good': isGood, // 좋아요/싫어요 상태 전달
-          'waste_name': _wasteName, // 폐기물 이름 전달
+          'waste_name': feedbackWasteName,
         }),
       );
 
@@ -125,6 +134,61 @@ class _ResultScreenState extends State<ResultScreen> {
       }
     } catch (error) {
       _showAlert("네트워크 오류: $error");
+    }
+  }
+
+  Future<void> _searchWaste(String query) async {
+    if (query.isEmpty) {
+      print("검색어를 입력해주세요.");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final token = await SecureStorageUtil.getToken();
+
+      // URL에 검색어를 포함
+      final Uri uri = Uri.parse('http://10.0.2.2:3000/lar-waste/search').replace(
+        queryParameters: {
+          'waste_name': query, // 검색어 추가
+        },
+      );
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        final wastes = (responseBody['wastes'] as List)
+            .map((item) => {
+          'waste_name': item['waste_name'],
+          'waste_standard': item['waste_standard'],
+          'fee': item['fee'],
+        })
+            .toList();
+
+        setState(() {
+          _searchResults = wastes;
+          _isLoading = false; // Add this to stop loading indicator
+        });
+      } else {
+        setState(() {
+          _isLoading = false; // Add this to stop loading indicator
+        });
+        _showAlert("검색 실패. 상태 코드: ${response.statusCode}");
+      }
+    } catch (error) {
+      setState(() {
+        _isLoading = false; // Add this to stop loading indicator
+      });
+      _showAlert("검색 중 오류가 발생했습니다: $error");
     }
   }
 
@@ -341,79 +405,91 @@ class _ResultScreenState extends State<ResultScreen> {
                       ],
                     ),
                     SizedBox(height: 20),
-                    if (_showAlternativeInput)
-                      Column(
-                        children: [
-                          Text(
-                            'AI가 분류한 결과가 아닌가요?',
-                            style: TextStyle(
-                                fontSize: 18, color: Color(0xFF5F5F5F)),
-                          ),
-                          SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFF5F5F5), // 배경색 설정
-                                    borderRadius: BorderRadius.circular(
-                                        20), // 둥근 모서리
-                                  ),
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      contentPadding:
-                                      EdgeInsets.symmetric(
-                                          horizontal: 16),
-                                      hintText: '폐기물 종류 검색',
-                                      border: InputBorder.none,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              Container(
-                                child: IconButton(
-                                  icon: Icon(Icons.search,
-                                      color: Color(0xFF599468)),
-                                  iconSize: 28,
-                                  onPressed: () {
-                                    // 검색 버튼 클릭 시 동작
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 20),
-                        ],
-                      )
-                    else
-                      SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    _showAlternativeInput
+                        ? Column(
                       children: [
-                        ElevatedButton(
-                          onPressed: _handleSubmit,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            side: BorderSide(color: Color(0xFFD9D9D9)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            minimumSize: Size(120, 40),
-                          ),
-                          child: Text(
-                            '제출하기',
-                            style: TextStyle(color: Color(0xFF000000)),
-                          ),
+                        Text(
+                          'AI가 분류한 결과가 아닌가요?',
+                          style: TextStyle(
+                              fontSize: 16, color: Color(0xFF5F5F5F)),
                         ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFF5F5F5), // 배경색 설정
+                                  borderRadius: BorderRadius.circular(
+                                      20), // 둥근 모서리
+                                ),
+                                child: TextField(
+                                  controller: _searchController,  // Bind the search controller
+                                  decoration: InputDecoration(
+                                    contentPadding:
+                                    EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    hintText: '폐기물 종류 검색',
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Container(
+                              child: IconButton(
+                                icon: Icon(Icons.search,
+                                    color: Color(0xFF599468)),
+                                iconSize: 28,
+                                onPressed: () {
+                                  _searchWaste(_searchController.text); // Start search
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        _searchResults.isNotEmpty
+                            ? ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: _searchResults.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(_searchResults[index]
+                              ['waste_name']),
+                              subtitle: Text(
+                                  '${_searchResults[index]['waste_standard']} : ${_searchResults[index]['fee']}원'),
+                            );
+                          },
+                        )
+                            : SizedBox(),
                       ],
-                    ),
+                    )
+                        : SizedBox(),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton(
+                            onPressed: _handleSubmit,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              side: BorderSide(color: Color(0xFFD9D9D9)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              minimumSize: Size(120, 40),
+                            ),
+                            child: Text(
+                              '제출하기',
+                              style: TextStyle(color: Color(0xFF000000)),
+                            ),
+                          ),
+                        ],),),
                   ],
                 )
-                    : Text(
-                  '이미지가 없습니다.',
-                  style: TextStyle(fontSize: 18),
-                ),
+                    : SizedBox(),
               ],
             ),
           ),
