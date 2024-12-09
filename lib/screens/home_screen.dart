@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../secure_storage_util.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onNavigateToInquiry; // InquiryScreen으로 이동하는 콜백
   final VoidCallback onNavigateToFAQ; // FAQScreen으로 이동하는 콜백
+  final Function(List<Map<String, dynamic>> wastes) onNavigateToResult; // 검색 결과 화면으로 이동하는 콜백
 
   HomeScreen({
     required this.onNavigateToInquiry,
     required this.onNavigateToFAQ,
+    required this.onNavigateToResult, // 추가
   });
 
   @override
@@ -27,6 +30,10 @@ class _HomeScreenState extends State<HomeScreen> {
   int currentPage = 0;
 
   String? homeMessage; // 홈 화면 데이터를 저장할 변수
+  String searchQuery = "";  //text_result
+  bool _isLoading = false; // 검색 로딩 상태
+
+
 
   @override
   void initState() {
@@ -40,28 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(Duration(seconds: 3), _autoScroll);
     });
-
-    // 홈 데이터 로드
-    _fetchHomeData();
-  }
-
-  // 홈 화면 데이터 가져오기
-  Future<void> _fetchHomeData() async {
-    final String url = "http://10.0.2.2:3000/"; // Node.js 서버 URL
-
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final responseBody = json.decode(response.body);
-        setState(() {
-          homeMessage = responseBody['message'];
-        });
-      } else {
-        print("홈 화면 데이터를 가져오지 못했습니다. 상태 코드: ${response.statusCode}");
-      }
-    } catch (error) {
-      print("네트워크 오류: $error");
-    }
   }
 
   void _autoScroll() {
@@ -85,6 +70,57 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  // !!!!!!!!!텍스트 검색 요청
+  Future<void> _searchWaste() async {
+    if (searchQuery.isEmpty) {
+      print("검색어를 입력해주세요.");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // 토큰 가져오기
+      final token = await SecureStorageUtil.getToken();
+
+      // URL에 검색어를 포함
+      final Uri uri = Uri.parse('http://10.0.2.2:3000/lar-waste/search').replace(
+        queryParameters: {
+          'waste_name': searchQuery, // 검색어 추가
+        },
+      );
+
+      // 서버 요청
+      final response = await http.get(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // 서버 응답 처리
+        final responseBody = json.decode(response.body);
+        final wastes = (responseBody['wastes'] as List<dynamic>)
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+
+        // 검색 결과 화면으로 이동
+        widget.onNavigateToResult(wastes);
+      } else {
+        print("검색 실패: ${response.body}");
+      }
+    } catch (e) {
+      print("네트워크 오류: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -136,6 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               SizedBox(height: 20),
+
               // 검색 바
               Row(
                 children: [
@@ -147,6 +184,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: TextField(
+                        onChanged: (value) {
+                          searchQuery = value; // 검색어 갱신
+                        },
                         decoration: InputDecoration(
                           hintText: '폐기물 종류 검색',
                           hintStyle: TextStyle(color: Color(0xFF5F5F5F)),
@@ -156,9 +196,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(width: 10),
-                  IconButton(
-                    icon: Icon(Icons.search, color: Color(0xFF599468)),
-                    onPressed: () {},
+                  _isLoading
+                      ? CircularProgressIndicator()
+                      : IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: _searchWaste, // 검색 함수 호출
                   ),
                 ],
               ),

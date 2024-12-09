@@ -6,6 +6,7 @@ import 'inquiry_screen.dart';
 import 'faq_screen.dart';
 import 'result_screen.dart';
 import 'history_screen.dart';
+import 'text_result_screen.dart';
 import 'dart:io';
 
 class MainScreen extends StatefulWidget {
@@ -22,6 +23,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget _currentScreen = HomeScreen(
     onNavigateToInquiry: () {},
     onNavigateToFAQ: () {},
+    onNavigateToResult: (searchQuery) {},
   );
 
   @override
@@ -31,8 +33,28 @@ class _MainScreenState extends State<MainScreen> {
     _currentScreen = HomeScreen(
       onNavigateToInquiry: _navigateToInquiryScreen,
       onNavigateToFAQ: _navigateToFAQScreen,
+      onNavigateToResult: _navigateToTextResultScreen, // 콜백 전달
     );
   }
+
+  // TextResultScreen으로 이동
+  void _navigateToTextResultScreen(List<Map<String, dynamic>> wastes) {
+    setState(() {
+      _currentScreen = TextResultScreen(
+        wastes: wastes,
+        onNavigateBack: () {
+          setState(() {
+            _currentScreen = HomeScreen(
+              onNavigateToInquiry: _navigateToInquiryScreen,
+              onNavigateToFAQ: _navigateToFAQScreen,
+              onNavigateToResult: _navigateToTextResultScreen,
+            );
+          });
+        },
+      );
+    });
+  }
+
 
   // 고객 문의 화면으로 이동
   void _navigateToInquiryScreen() {
@@ -43,6 +65,7 @@ class _MainScreenState extends State<MainScreen> {
             _currentScreen = HomeScreen(
               onNavigateToInquiry: _navigateToInquiryScreen,
               onNavigateToFAQ: _navigateToFAQScreen,
+              onNavigateToResult: _navigateToTextResultScreen,
             );
           });
         },
@@ -59,6 +82,7 @@ class _MainScreenState extends State<MainScreen> {
             _currentScreen = HomeScreen(
               onNavigateToInquiry: _navigateToInquiryScreen,
               onNavigateToFAQ: _navigateToFAQScreen,
+              onNavigateToResult: _navigateToTextResultScreen,
             );
           });
         },
@@ -109,10 +133,11 @@ class _MainScreenState extends State<MainScreen> {
       _selectedIndex = index;
       switch (index) {
         case 0:
-        // 홈 화면
+        // HomeScreen 초기화
           _currentScreen = HomeScreen(
             onNavigateToInquiry: _navigateToInquiryScreen,
             onNavigateToFAQ: _navigateToFAQScreen,
+            onNavigateToResult: _navigateToTextResultScreen, // 콜백 추가
           );
           break;
         case 1:
