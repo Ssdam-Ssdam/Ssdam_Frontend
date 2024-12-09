@@ -120,6 +120,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -181,7 +182,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   height: 80,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    border: Border.all(color: Color(0xFFD9D9D9)),
+                                    border: Border.all(color: Color(0xFF599468)),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Column(
@@ -210,7 +211,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   height: 80,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    border: Border.all(color: Color(0xFFD9D9D9)),
+                                    border: Border.all(color: Color(0xFF599468)),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Column(

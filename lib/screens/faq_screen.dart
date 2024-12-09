@@ -32,6 +32,7 @@ class _FAQScreenState extends State<FAQScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,  // 배경색을 흰색으로 설정
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -46,7 +47,6 @@ class _FAQScreenState extends State<FAQScreen> {
             ),
           ),
         ),
-
         title: Text(
           '자주 묻는 질문',
           style: TextStyle(
@@ -59,30 +59,35 @@ class _FAQScreenState extends State<FAQScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: faqs.length,
-          itemBuilder: (context, index) {
-            return Card(
-              margin: EdgeInsets.symmetric(vertical: 8.0),
-              child: ExpansionTile(
-                title: Text(
-                  faqs[index]['question']!,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      faqs[index]['answer']!,
-                      style: TextStyle(fontSize: 14, color: Colors.black87),
-                    ),
+      body: Container(
+        color: Colors.white,  // ListView의 배경색을 흰색으로 설정
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView.builder(
+            itemCount: faqs.length,
+            itemBuilder: (context, index) {
+              return Card(
+                margin: EdgeInsets.symmetric(vertical: 8.0),
+                color: Colors.white, // Card 배경색을 흰색으로 설정
+                child: ExpansionTile(
+                  backgroundColor: Colors.white, // ExpansionTile 배경색을 흰색으로 설정
+                  title: Text(
+                    faqs[index]['question']!,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                ],
-              ),
-            );
-          },
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        faqs[index]['answer']!,
+                        style: TextStyle(fontSize: 14, color: Colors.black87),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

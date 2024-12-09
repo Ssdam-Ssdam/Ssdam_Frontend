@@ -38,6 +38,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,  // 배경색을 흰색으로 설정
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

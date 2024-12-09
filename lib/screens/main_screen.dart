@@ -113,6 +113,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       body: _currentScreen,
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,  // 배경색을 흰색으로 설정
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
