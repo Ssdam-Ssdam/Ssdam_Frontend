@@ -11,9 +11,16 @@ class LoginScreen extends StatelessWidget {
   final TextEditingController _passwordController = TextEditingController();
 
   Future<void> _login(BuildContext context) async {
-    final String url = "http://10.0.2.2:3000/user/login";
     final String userId = _userIdController.text;
     final String password = _passwordController.text;
+
+    // 입력값 검증
+    if (userId.isEmpty || password.isEmpty) {
+      _showErrorDialog(context, "아이디와 비밀번호를 모두 입력해주세요.");
+      return; // 서버 요청을 중단
+    }
+
+    final String url = "http://10.0.2.2:3000/user/login";
 
     try {
       final response = await http.post(
@@ -38,7 +45,7 @@ class LoginScreen extends StatelessWidget {
           _showErrorDialog(context, "로그인 정보가 유효하지 않습니다.");
         }
       } else {
-        _showErrorDialog(context, "서버 오류: ${response.statusCode}");
+        _showErrorDialog(context, "아이디나 비밀번호가 일치하지 않습니다.");
       }
     } catch (error) {
       _showErrorDialog(context, "네트워크 오류 발생: $error");
