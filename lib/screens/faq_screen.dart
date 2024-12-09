@@ -37,62 +37,72 @@ class _FAQScreenState extends State<FAQScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,  // 배경색을 흰색으로 설정
-      appBar: AppBar(
-        leading: GestureDetector(
-          onTap: () {
-            widget.onNavigateBack(); // HomeScreen으로 돌아가기
-          },
-          child: SizedBox(
-            height: 30, // 전체 컨테이너 높이
-            width: 30,  // 전체 컨테이너 너비
-            child: Image.asset(
-              'assets/backbutton.png',
-              fit: BoxFit.contain, // 이미지 비율 유지하며 축소
+      body: Column(
+        children: [
+          // 상단바 역할
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Stack(
+              children: [
+                // 뒤로 가기 버튼 (왼쪽 정렬)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: widget.onNavigateBack, // HomeScreen으로 돌아가기
+                    child: Image.asset(
+                      'assets/backbutton.png', // backbutton.png 파일 경로 확인 필요
+                      height: 40,
+                    ),
+                  ),
+                ),
+                // 제목 텍스트 (가운데 정렬)
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    '자주 묻는 질문',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ),
-        title: Text(
-          '자주 묻는 질문',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+          Divider(
+            color: Color(0xFFD9D9D9),
+            thickness: 1,
           ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: Container(
-        color: Colors.white,  // ListView의 배경색을 흰색으로 설정
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ListView.builder(
-            itemCount: faqs.length,
-            itemBuilder: (context, index) {
-              return Card(
-                margin: EdgeInsets.symmetric(vertical: 8.0),
-                color: Colors.white, // Card 배경색을 흰색으로 설정
-                child: ExpansionTile(
-                  backgroundColor: Colors.white, // ExpansionTile 배경색을 흰색으로 설정
-                  title: Text(
-                    faqs[index]['question']!,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        faqs[index]['answer']!,
-                        style: TextStyle(fontSize: 14, color: Colors.black87),
-                      ),
+          // FAQ 리스트
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16.0),
+              itemCount: faqs.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                  color: Colors.white, // Card 배경색 설정
+                  child: ExpansionTile(
+                    title: Text(
+                      faqs[index]['question']!,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                  ],
-                ),
-              );
-            },
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          faqs[index]['answer']!,
+                          style: TextStyle(fontSize: 14, color: Colors.black87),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
