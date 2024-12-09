@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../secure_storage_util.dart'; // SecureStorageUtil import
+import 'package:intl/intl.dart'; // 날짜 포맷을 위한 intl 패키지
 
 class InquiryScreen extends StatefulWidget {
-  final VoidCallback onNavigateBack; // HomeScreen으로 돌아가는 콜백
+  final VoidCallback onNavigateBack;
 
   const InquiryScreen({super.key, required this.onNavigateBack});
 
@@ -14,6 +16,7 @@ class InquiryScreen extends StatefulWidget {
 class _InquiryScreenState extends State<InquiryScreen> {
   String selectedValue = '전체'; // 드롭다운 초기값
   List<Map<String, dynamic>> inquiries = []; // 문의 데이터 리스트
+  final String url = "http://10.0.2.2:3000/inquiry/view-all"; // 서버 URL
 
   @override
   void initState() {
@@ -21,16 +24,32 @@ class _InquiryScreenState extends State<InquiryScreen> {
     _fetchInquiries(); // 문의 데이터 로드
   }
 
-  // 서버에서 문의 데이터 가져오기
   Future<void> _fetchInquiries() async {
-    final String url = "http://10.0.2.2:3000/inquiry/view-all"; // 서버 URL
     try {
-      final response = await http.get(Uri.parse(url));
+      final token = await SecureStorageUtil.getToken();
+      if (token == null) {
+        print("토큰이 없습니다. 로그인이 필요합니다.");
+        return;
+      }
+
+      final headers = {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      };
+
+      final response = await http.get(Uri.parse(url), headers: headers);
+
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body); // JSON 데이터 파싱
-        setState(() {
-          inquiries = List<Map<String, dynamic>>.from(data);
-        });
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        // 'inquiry' 키의 데이터를 꺼내와서 리스트로 변환
+        if (responseData.containsKey('inquiry')) {
+          setState(() {
+            inquiries = List<Map<String, dynamic>>.from(responseData['inquiry']);
+          });
+        } else {
+          print("문의 데이터가 없습니다: ${response.body}");
+        }
       } else {
         print("문의 데이터를 가져오지 못했습니다. 상태 코드: ${response.statusCode}");
       }
@@ -39,10 +58,51 @@ class _InquiryScreenState extends State<InquiryScreen> {
     }
   }
 
+  String _formatDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) {
+      return ''; // 날짜가 없으면 빈 문자열 반환
+    }
+    try {
+      // 서버에서 받은 문자열을 DateTime으로 변환
+      DateTime parsedDate = DateTime.parse(dateStr);
+      // 원하는 포맷으로 변환 (예: "2024년 12월 9일")
+      return DateFormat('yyyy년 MM월 dd일').format(parsedDate);
+    } catch (e) {
+      print("날짜 포맷 오류: $e");
+      return ''; // 변환 실패 시 빈 문자열 반환
+    }
+  }
+
+  String _getStatusText(dynamic resStatus) {
+    if (resStatus == null) return '알 수 없음'; // null 처리
+    if (resStatus is bool) return resStatus ? '답변완료' : '진행중'; // bool 처리
+    try {
+      final int status = resStatus is int ? resStatus : int.parse(resStatus);
+      return status == 0 ? '진행중' : '답변완료';
+    } catch (e) {
+      print('res_status 변환 오류: $e');
+      return '알 수 없음';
+    }
+  }
+
+  Color _getStatusColor(dynamic resStatus) {
+    if (resStatus == null) return Colors.grey; // null 처리
+    if (resStatus is bool) return resStatus ? Color(0xFF25A52D) : Color(0xFFCDB72A); // bool 처리
+    try {
+      final int status = resStatus is int ? resStatus : int.parse(resStatus);
+      return status == 0 ? Color(0xFFCDB72A) : Color(0xFF25A52D);
+    } catch (e) {
+      print('res_status 변환 오류: $e');
+      return Colors.grey;
+    }
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,  // 배경색을 흰색으로 설정
+      backgroundColor: Colors.white, // 배경색 흰색 설정
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -50,9 +110,9 @@ class _InquiryScreenState extends State<InquiryScreen> {
             Row(
               children: [
                 GestureDetector(
-                  onTap: widget.onNavigateBack, // HomeScreen으로 돌아가기
+                  onTap: widget.onNavigateBack,
                   child: Image.asset(
-                    'assets/backbutton.png', // backbutton.png 파일 경로를 맞추세요
+                    'assets/backbutton.png',
                     height: 40,
                   ),
                 ),
@@ -121,7 +181,6 @@ class _InquiryScreenState extends State<InquiryScreen> {
               ],
             ),
             SizedBox(height: 16),
-            // 문의 목록
             Expanded(
               child: inquiries.isEmpty
                   ? Center(
@@ -137,6 +196,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
                   return Column(
                     children: [
                       Card(
+                        color: Colors.white,
                         elevation: 2,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -148,7 +208,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
                                 MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    inquiry['created_at'], // 생성 날짜
+                                    _formatDate(inquiry['created_at']),
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFFB6B6B6),
@@ -160,31 +220,26 @@ class _InquiryScreenState extends State<InquiryScreen> {
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.white,
-                                      side: BorderSide(
-                                          color: Color(0xFFD9D9D9)),
+                                      side: BorderSide(color: Color(0xFFD9D9D9)),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(20),
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
                                       minimumSize: Size(78, 31),
                                     ),
                                     child: Text(
-                                      index % 2 == 0
-                                          ? '진행중'
-                                          : '답변완료', // 상태
+                                      _getStatusText(inquiry['res_status']),
                                       style: TextStyle(
                                         fontSize: 15,
-                                        color: index % 2 == 0
-                                            ? Color(0xFFCDB72A) // 진행중
-                                            : Color(0xFF25A52D), // 답변완료
+                                        color: _getStatusColor(inquiry['res_status']),
                                       ),
                                     ),
                                   ),
+
                                 ],
                               ),
                               SizedBox(height: 7),
                               Text(
-                                inquiry['title'], // 제목
+                                inquiry['title'] ?? '',
                                 style: TextStyle(
                                     fontSize: 18, color: Colors.black),
                               ),
