@@ -9,7 +9,7 @@ import '../secure_storage_util.dart';
 
 class SearchScreen extends StatefulWidget {
   final ValueChanged<Widget>? onScreenChange; // 화면 전환 콜백
-  final Function(File, String, double, String, String, String)? onNavigateToResult; // 결과 화면 이동 콜백
+  final Function(File, String, double, String, String, String, List<Map<String, dynamic>> wasteFees)? onNavigateToResult; // 결과 화면 이동 콜백
 
   SearchScreen({
     this.onScreenChange,
@@ -75,11 +75,12 @@ class _SearchScreenState extends State<SearchScreen> {
         final imgId = (imgData['imgId'] ?? '').toString();
         final userId = (imgData['userId'] ?? '').toString();
 
-
-        print('Waste Name: $wasteName');
-        print('Accuracy: $accuracy');
-        print('Image URL: $imageUrl');
-        print('Img ID: $imgId');
+        final List<Map<String, dynamic>> wasteFees = List<Map<String, dynamic>>.from(data['waste_fees'].map((fee) {
+          return {
+            'waste_standard': fee['waste_standard'],
+            'fee': fee['fee'],
+          };
+        }));
 
         // 콜백 호출로 ResultScreen으로 이동
         if (widget.onNavigateToResult != null) {
@@ -90,6 +91,7 @@ class _SearchScreenState extends State<SearchScreen> {
             imageUrl,
             imgId,
             userId,
+            wasteFees, // Passing the wasteFees data
           );
         }
       } else {

@@ -5,9 +5,12 @@ import 'search_screen.dart';
 import 'inquiry_screen.dart';
 import 'faq_screen.dart';
 import 'result_screen.dart';
+import 'history_screen.dart';
 import 'dart:io';
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -34,27 +37,31 @@ class _MainScreenState extends State<MainScreen> {
   // 고객 문의 화면으로 이동
   void _navigateToInquiryScreen() {
     setState(() {
-      _currentScreen = InquiryScreen();
+      _currentScreen = InquiryScreen(
+        onNavigateBack: () {
+          setState(() {
+            _currentScreen = HomeScreen(
+              onNavigateToInquiry: _navigateToInquiryScreen,
+              onNavigateToFAQ: _navigateToFAQScreen,
+            );
+          });
+        },
+      );
     });
   }
 
   // FAQ 화면으로 이동
   void _navigateToFAQScreen() {
     setState(() {
-      _currentScreen = FAQScreen();
-    });
-  }
-
-  // ResultScreen으로 이동 (SearchScreen에서 데이터를 전달받아 사용)
-  void _navigateToResultScreen(File image, String wasteName, double accuracy, String imageUrl, String imgId, String userId) {
-    setState(() {
-      _currentScreen = ResultScreen(
-        image: image,
-        wasteName: wasteName,
-        accuracy: accuracy,
-        imageUrl: imageUrl,
-        imgId: imgId,
-        userId: userId,
+      _currentScreen = FAQScreen(
+        onNavigateBack: () {
+          setState(() {
+            _currentScreen = HomeScreen(
+              onNavigateToInquiry: _navigateToInquiryScreen,
+              onNavigateToFAQ: _navigateToFAQScreen,
+            );
+          });
+        },
       );
     });
   }
@@ -70,6 +77,29 @@ class _MainScreenState extends State<MainScreen> {
         },
         onNavigateToResult: _navigateToResultScreen, // 결과 화면으로 이동 콜백 설정
       );
+    });
+  }
+
+  // ResultScreen으로 이동 (SearchScreen에서 데이터를 전달받아 사용)
+  void _navigateToResultScreen(File image, String wasteName, double accuracy, String imageUrl, String imgId, String userId, List<Map<String, dynamic>> wasteFees,  // Pass this as an argument
+      ) {
+    setState(() {
+      _currentScreen = ResultScreen(
+        image: image,
+        wasteName: wasteName,
+        accuracy: accuracy,
+        imageUrl: imageUrl,
+        imgId: imgId,
+        userId: userId,
+        wasteFees: wasteFees,  // wasteFees 전달
+      );
+    });
+  }
+
+  // 분석 결과 화면으로 이동
+  void _navigateToHistoryScreen() {
+    setState(() {
+      _currentScreen = HistoryScreen();
     });
   }
 
@@ -91,7 +121,9 @@ class _MainScreenState extends State<MainScreen> {
           break;
         case 2:
         // 마이페이지
-          _currentScreen = MyProfileScreen();
+          _currentScreen = MyProfileScreen(
+            onNavigateToHistory: _navigateToHistoryScreen, // onNavigateToHistory 전달
+          );
           break;
       }
     });
@@ -109,7 +141,7 @@ class _MainScreenState extends State<MainScreen> {
         backgroundColor: Colors.white,
         centerTitle: false,
         elevation: 0,
-        iconTheme: IconThemeData(color: Color(0xFF5F5F5F)),
+        iconTheme: const IconThemeData(color: Color(0xFF5F5F5F)),
       ),
       body: _currentScreen,
       bottomNavigationBar: BottomNavigationBar(

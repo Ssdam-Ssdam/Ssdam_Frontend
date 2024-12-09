@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class FAQScreen extends StatefulWidget {
+  final VoidCallback onNavigateBack; // HomeScreen으로 돌아가는 콜백
+
+  const FAQScreen({super.key, required this.onNavigateBack});
+
   @override
   _FAQScreenState createState() => _FAQScreenState();
 }
@@ -36,9 +40,9 @@ class _FAQScreenState extends State<FAQScreen> {
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
-            // 뒤로 가기 동작
+            widget.onNavigateBack(); // HomeScreen으로 돌아가기
           },
-          child: Container(
+          child: SizedBox(
             height: 30, // 전체 컨테이너 높이
             width: 30,  // 전체 컨테이너 너비
             child: Image.asset(

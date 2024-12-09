@@ -13,6 +13,7 @@ class ResultScreen extends StatefulWidget {
   final String imageUrl;
   final String imgId;
   final String userId;
+  final List<Map<String, dynamic>> wasteFees; // Added wasteFees parameter
 
   ResultScreen({
     required this.image,
@@ -21,6 +22,7 @@ class ResultScreen extends StatefulWidget {
     required this.imageUrl,
     required this.imgId,
     required this.userId,
+    required this.wasteFees,
   });
 
   //widget.accuracy => 정확도 widget.wasteName => 폐기물이름
@@ -39,76 +41,26 @@ class _ResultScreenState extends State<ResultScreen> {
   String? _errorMessage;
   List<Map<String, dynamic>> _wasteFees = []; // waste_fees 데이터 저장 리스트
 
-
   @override
   void initState() {
     super.initState();
-    _fetchWasteData();
-  }
+    _wasteName = widget.wasteName;
+    _accuracy = widget.accuracy;
+    _imgId = widget.imgId;
 
-  // 서버에서 waste_name과 accuracy를 가져오기
-  Future<void> _fetchWasteData() async {
-    final String url = "http://10.0.2.2:3000/lar-waste/upload"; // 서버 URL
-
-    if (widget.image == null) {
-      setState(() {
-        _errorMessage = "이미지가 없습니다.";
-      });
-      return;
-    }
+    print("imgId: $_imgId");
 
     try {
-      final token = await SecureStorageUtil.getToken(); // 저장된 토큰 가져오기
-
-      final request = http.MultipartRequest('POST', Uri.parse(url));
-
-      // 토큰 헤더 추가
-      request.headers.addAll({
-        "Authorization": "Bearer $token",
-        "Content-Type": "application/json",
-      });
-
-      // 이미지 추가
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'uploadFile', // 서버에서 받을 필드 이름
-          widget.image!.path,
-        ),
-      );
-
-      final response = await request.send();
-      if (response.statusCode == 200) {
-        final responseData = await http.Response.fromStream(response);
-        final data = jsonDecode(responseData.body);
-
-        print("서버 응답 데이터: $data");
-        print("imgId 값: ${data['imgId'].toString()}");
-
-
-        // JSON 데이터에서 waste_name과 accuracy를 가져와 UI에 반영
-        setState(() {
-          _wasteName = data['waste_name'];
-          _accuracy = data['accuracy'];
-          _imgId = data['imgId'].toString(); // 이미지 ID를 문자열로 저장
-          _wasteFees = List<Map<String, dynamic>>.from(data['waste_fees'].map((fee) {
-            return {
-              'waste_standard': fee['waste_standard'],
-              'fee': fee['fee'],
-            };
-          }));
-        });
-      } else {
-        setState(() {
-          _errorMessage = "결과를 불러올 수 없습니다. 상태 코드: ${response.statusCode}";
-        });
-      }
-    } catch (error) {
-      setState(() {
-        _errorMessage = "네트워크 오류: $error";
-      });
+      _wasteFees = List<Map<String, dynamic>>.from(widget.wasteFees.map((fee) {
+        return {
+          'waste_standard': fee['waste_standard'],
+          'fee': fee['fee'],
+        };
+      }));
+    } catch (e) {
+      _errorMessage = "폐기물 요금 정보를 불러오는 데 실패했습니다.";
     }
-  }
-
+    }
 
   Future<void> _sendFeedback(int isGood) async {
     final String url = "http://10.0.2.2:3000/lar-waste/feedback"; // 서버 URL

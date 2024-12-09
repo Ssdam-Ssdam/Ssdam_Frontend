@@ -4,8 +4,12 @@ import 'dart:convert';
 import '../secure_storage_util.dart';
 import 'login_screen.dart';
 
-
 class MyProfileScreen extends StatefulWidget {
+  final VoidCallback onNavigateToHistory;
+
+  const MyProfileScreen({super.key, required this.onNavigateToHistory});
+
+
   @override
   _MyProfileScreenState createState() => _MyProfileScreenState();
 }
@@ -126,9 +130,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                print('분석 결과 조회 클릭');
-              },
+              onPressed: widget.onNavigateToHistory, // 콜백 호출
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 side: BorderSide(color: Color(0xFFD9D9D9)),

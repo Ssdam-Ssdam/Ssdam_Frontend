@@ -3,6 +3,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class InquiryScreen extends StatefulWidget {
+  final VoidCallback onNavigateBack; // HomeScreen으로 돌아가는 콜백
+
+  const InquiryScreen({super.key, required this.onNavigateBack});
+
   @override
   _InquiryScreenState createState() => _InquiryScreenState();
 }
@@ -46,9 +50,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
             Row(
               children: [
                 GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context); // 이전 화면으로 이동
-                  },
+                  onTap: widget.onNavigateBack, // HomeScreen으로 돌아가기
                   child: Image.asset(
                     'assets/backbutton.png', // backbutton.png 파일 경로를 맞추세요
                     height: 40,
