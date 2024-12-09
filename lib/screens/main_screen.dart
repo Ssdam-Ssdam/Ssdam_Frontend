@@ -116,6 +116,8 @@ class _MainScreenState extends State<MainScreen> {
         imgId: imgId,
         userId: userId,
         wasteFees: wasteFees,  // wasteFees 전달
+        onNavigateToSearch: _navigateToSearchScreen, // SearchScreen으로 이동하는 콜백 전달
+
       );
     });
   }
@@ -142,7 +144,9 @@ class _MainScreenState extends State<MainScreen> {
           break;
         case 1:
         // 검색 화면
-          _navigateToSearchScreen();
+          _currentScreen = SearchScreen(
+              onNavigateToResult: _navigateToResultScreen,
+          );
           break;
         case 2:
         // 마이페이지
