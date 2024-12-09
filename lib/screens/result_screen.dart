@@ -5,7 +5,6 @@ import 'dart:convert';
 import '../secure_storage_util.dart';
 import 'main_screen.dart';
 
-
 class ResultScreen extends StatefulWidget {
   final File? image;
   final String wasteName;
@@ -48,8 +47,6 @@ class _ResultScreenState extends State<ResultScreen> {
     _accuracy = widget.accuracy;
     _imgId = widget.imgId;
 
-    print("imgId: $_imgId");
-
     try {
       _wasteFees = List<Map<String, dynamic>>.from(widget.wasteFees.map((fee) {
         return {
@@ -60,7 +57,7 @@ class _ResultScreenState extends State<ResultScreen> {
     } catch (e) {
       _errorMessage = "폐기물 요금 정보를 불러오는 데 실패했습니다.";
     }
-    }
+  }
 
   Future<void> _sendFeedback(int isGood) async {
     final String url = "http://10.0.2.2:3000/lar-waste/feedback"; // 서버 URL
@@ -103,7 +100,6 @@ class _ResultScreenState extends State<ResultScreen> {
     }
   }
 
-
   void _showAlert(String message) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showDialog(
@@ -122,7 +118,6 @@ class _ResultScreenState extends State<ResultScreen> {
     });
   }
 
-
   void _handleSubmit() {
     if (!_isButtonClicked) {
       // 좋아요/싫어요 버튼을 누르지 않은 경우
@@ -136,7 +131,7 @@ class _ResultScreenState extends State<ResultScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,  // 배경색을 흰색으로 설정
+      backgroundColor: Colors.white, // 배경색을 흰색으로 설정
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -167,11 +162,34 @@ class _ResultScreenState extends State<ResultScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    Text(
-                      '대형폐기물은 <$_wasteName> 입니다!', // "쇼파" 출력
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF5F5F5F),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '대형폐기물은 ', // 기본 텍스트
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF5F5F5F), // 기본 색상
+                            ),
+                          ),
+                          TextSpan(
+                            text: '$_wasteName', // wasteName 텍스트
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF599468), // wasteName 색상 변경
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' 입니다!',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF5F5F5F), // 기본 색상
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     SizedBox(height: 20),
@@ -192,51 +210,67 @@ class _ResultScreenState extends State<ResultScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    Table(
-                      border: TableBorder.all(color: Colors.green),
-                      children: [
-                        // 헤더 행 추가
-                        TableRow(
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Color(0xFF599468)),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Column(
                           children: [
+                            // waste_name 출력
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                '폐기물 기준',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                '$_wasteName',
+                                style: const TextStyle(fontSize: 16),
+                                textAlign: TextAlign.center, // 텍스트 중앙 정렬
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                '요금',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                              ),
+                            Table(
+                              columnWidths: {
+                                0: FlexColumnWidth(2),
+                                // 첫 번째 열은 두 번째 열보다 1.5 배로 넓음
+                                1: FlexColumnWidth(1),
+                                // 두 번째 열
+                              },
+                              children: [
+                                // 데이터 행 추가
+                                ..._wasteFees.map((fee) {
+                                  return TableRow(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                        const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          '   ${fee['waste_standard'] ?? '기준 없음'}',
+                                          style: const TextStyle(
+                                              fontSize: 16),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(right: 20), // 오른쪽에만 여백 추가
+                                        child: Text(
+                                          '${fee['fee']}원',
+                                          style: const TextStyle(
+                                              fontSize: 16),
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ],
                             ),
                           ],
                         ),
-                        // 데이터 행 추가
-                        ..._wasteFees.map((fee) {
-                          return TableRow(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(fee['waste_standard'], style: TextStyle(fontSize: 16)),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text('${fee['fee']}원', style: TextStyle(fontSize: 16)),
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ],
+                      ),
                     ),
-
                     SizedBox(height: 20),
                     Text(
                       '결과에 만족하셨나요?',
-                      style:
-                      TextStyle(fontSize: 16, color: Color(0xFF6C6C6C)),
+                      style: TextStyle(
+                          fontSize: 16, color: Color(0xFF6C6C6C)),
                     ),
                     SizedBox(height: 10),
                     Row(
@@ -294,12 +328,13 @@ class _ResultScreenState extends State<ResultScreen> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: Color(0xFFF5F5F5), // 배경색 설정
-                                    borderRadius:
-                                    BorderRadius.circular(20), // 둥근 모서리
+                                    borderRadius: BorderRadius.circular(
+                                        20), // 둥근 모서리
                                   ),
                                   child: TextField(
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
+                                      contentPadding:
+                                      EdgeInsets.symmetric(
                                           horizontal: 16),
                                       hintText: '폐기물 종류 검색',
                                       border: InputBorder.none,

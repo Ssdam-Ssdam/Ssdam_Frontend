@@ -66,24 +66,17 @@ class _SearchScreenState extends State<SearchScreen> {
         print('Response Body: ${responseData.body}');
         final Map<String, dynamic> data = json.decode(responseData.body);
         print('Parsed Data: $data');
-
-        // 중첩된 img 객체 접근
-        final imgData = data['img'] ?? {};
-        final wasteName = imgData['waste_name'] ?? 'Unknown';
-        final accuracy = imgData['accuracy'] ?? 0.0;
-        final imageUrl = imgData['file_path'] ?? '';
-        final imgId = (imgData['imgId'] ?? '').toString();
-        final userId = (imgData['userId'] ?? '').toString();
-
-        final List<Map<String, dynamic>> wasteFees = List<Map<String, dynamic>>.from(data['waste_fees'].map((fee) {
-          return {
-            'waste_standard': fee['waste_standard'],
-            'fee': fee['fee'],
-          };
-        }));
-
         // 콜백 호출로 ResultScreen으로 이동
         if (widget.onNavigateToResult != null) {
+          final Map<String, dynamic> data = json.decode(responseData.body);
+
+          String wasteName = data['waste_name'] ?? 'Unknown';
+          double accuracy = data['accuracy'] ?? 0.0;
+          String imageUrl = data['image'] ?? '';
+          String imgId = (data['imgId'] ?? '').toString();
+          String userId = (data['userId'] ?? '').toString();
+          List<Map<String, dynamic>> wasteFees = List<Map<String, dynamic>>.from(data['waste_fees']);
+
           widget.onNavigateToResult!(
             _selectedImage!,
             wasteName,

@@ -85,7 +85,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     margin: const EdgeInsets.symmetric(vertical: 10),
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.green),
+                      border: Border.all(color: Color(0xFF599468)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
