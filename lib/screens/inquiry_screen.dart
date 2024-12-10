@@ -74,7 +74,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
       // 서버에서 받은 문자열을 DateTime으로 변환
       DateTime parsedDate = DateTime.parse(dateStr);
       // 원하는 포맷으로 변환 (예: "2024년 12월 9일")
-      return DateFormat('yyyy년 MM월 dd일').format(parsedDate);
+      return DateFormat('yyyy-MM-dd HH:mm').format(parsedDate); // 원하는 형식으로 포맷
     } catch (e) {
       print("날짜 포맷 오류: $e");
       return ''; // 변환 실패 시 빈 문자열 반환
