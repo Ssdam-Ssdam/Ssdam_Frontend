@@ -167,7 +167,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
                           selectedValue = newValue!;
                         });
                       },
-                      items: <String>['전체', '내가 쓴 글']
+                      items: <String>['전체']
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
