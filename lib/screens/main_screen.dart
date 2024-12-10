@@ -3,6 +3,7 @@ import 'home_screen.dart';
 import 'my_profile_screen.dart';
 import 'search_screen.dart';
 import 'inquiry_screen.dart';
+import 'inquiry_create_screen.dart';
 import 'faq_screen.dart';
 import 'result_screen.dart';
 import 'history_screen.dart';
@@ -69,6 +70,16 @@ class _MainScreenState extends State<MainScreen> {
             );
           });
         },
+        onNavigateToInquiryCreate: _navigateToInquiryCreateScreen, // 콜백 전달
+      );
+    });
+  }
+
+  // InquiryCreateScreen으로 이동
+  void _navigateToInquiryCreateScreen() {
+    setState(() {
+      _currentScreen = InquiryCreateScreen(
+        onNavigateBack: _navigateToInquiryScreen, // InquiryScreen으로 돌아가는 콜백
       );
     });
   }

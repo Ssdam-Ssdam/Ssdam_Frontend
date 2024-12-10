@@ -6,8 +6,13 @@ import 'package:intl/intl.dart'; // 날짜 포맷을 위한 intl 패키지
 
 class InquiryScreen extends StatefulWidget {
   final VoidCallback onNavigateBack;
+  final VoidCallback onNavigateToInquiryCreate; // InquiryCreateScreen으로 이동 콜백 추가
 
-  const InquiryScreen({super.key, required this.onNavigateBack});
+  const InquiryScreen({
+    super.key,
+    required this.onNavigateBack,
+    required this.onNavigateToInquiryCreate, // 콜백 초기화
+  });
 
   @override
   _InquiryScreenState createState() => _InquiryScreenState();
@@ -127,9 +132,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
                 ),
                 Spacer(),
                 ElevatedButton(
-                  onPressed: () {
-                    // 문의하기 버튼 동작 정의
-                  },
+                  onPressed: widget.onNavigateToInquiryCreate, // InquiryCreateScreen으로 이동
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     side: BorderSide(color: Color(0xFFD9D9D9)),
