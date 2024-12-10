@@ -10,6 +10,7 @@ import 'result_screen.dart';
 import 'history_screen.dart';
 import 'text_result_screen.dart';
 import 'dart:io';
+import 'map_web_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -26,18 +27,21 @@ class _MainScreenState extends State<MainScreen> {
     onNavigateToInquiry: () {},
     onNavigateToFAQ: () {},
     onNavigateToResult: (searchQuery) {},
+    onNavigateToMap: () {}, // 추가
   );
 
   @override
   void initState() {
     super.initState();
-    // 초기 화면 설정
+    // 초기화면설정
     _currentScreen = HomeScreen(
       onNavigateToInquiry: _navigateToInquiryScreen,
       onNavigateToFAQ: _navigateToFAQScreen,
-      onNavigateToResult: _navigateToTextResultScreen, // 콜백 전달
+      onNavigateToResult: _navigateToTextResultScreen,
+      onNavigateToMap: _navigateToMapScreen, // 추가
     );
   }
+
 
   // TextResultScreen으로 이동
   void _navigateToTextResultScreen(List<Map<String, dynamic>> wastes) {
@@ -50,6 +54,25 @@ class _MainScreenState extends State<MainScreen> {
               onNavigateToInquiry: _navigateToInquiryScreen,
               onNavigateToFAQ: _navigateToFAQScreen,
               onNavigateToResult: _navigateToTextResultScreen,
+              onNavigateToMap: _navigateToMapScreen, // 추가
+            );
+          });
+        },
+      );
+    });
+  }
+
+  // MapWebScreen 이동 메서드
+  void _navigateToMapScreen() {
+    setState(() {
+      _currentScreen = MapWebScreen(
+        onNavigateBack: () {
+          setState(() {
+            _currentScreen = HomeScreen(
+              onNavigateToInquiry: _navigateToInquiryScreen,
+              onNavigateToFAQ: _navigateToFAQScreen,
+              onNavigateToResult: _navigateToTextResultScreen,
+              onNavigateToMap: _navigateToMapScreen, // 콜백 전달
             );
           });
         },
@@ -68,6 +91,7 @@ class _MainScreenState extends State<MainScreen> {
               onNavigateToInquiry: _navigateToInquiryScreen,
               onNavigateToFAQ: _navigateToFAQScreen,
               onNavigateToResult: _navigateToTextResultScreen,
+              onNavigateToMap: _navigateToMapScreen, // 추가
             );
           });
         },
@@ -100,6 +124,7 @@ class _MainScreenState extends State<MainScreen> {
                     onNavigateToInquiry: _navigateToInquiryScreen,
                     onNavigateToFAQ: _navigateToFAQScreen,
                     onNavigateToResult: _navigateToTextResultScreen,
+                    onNavigateToMap: _navigateToMapScreen, // 추가
                   );
                 });
               },
@@ -123,6 +148,7 @@ class _MainScreenState extends State<MainScreen> {
               onNavigateToInquiry: _navigateToInquiryScreen,
               onNavigateToFAQ: _navigateToFAQScreen,
               onNavigateToResult: _navigateToTextResultScreen,
+              onNavigateToMap: _navigateToMapScreen, // 추가
             );
           });
         },
@@ -180,6 +206,7 @@ class _MainScreenState extends State<MainScreen> {
             onNavigateToInquiry: _navigateToInquiryScreen,
             onNavigateToFAQ: _navigateToFAQScreen,
             onNavigateToResult: _navigateToTextResultScreen, // 콜백 추가
+            onNavigateToMap: _navigateToMapScreen, // 추가
           );
           break;
         case 1:

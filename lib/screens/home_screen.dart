@@ -7,11 +7,13 @@ class HomeScreen extends StatefulWidget {
   final VoidCallback onNavigateToInquiry; // InquiryScreen으로 이동하는 콜백
   final VoidCallback onNavigateToFAQ; // FAQScreen으로 이동하는 콜백
   final Function(List<Map<String, dynamic>> wastes) onNavigateToResult; // 검색 결과 화면으로 이동하는 콜백
+  final VoidCallback onNavigateToMap; // 추가: 지도 화면 이동 콜백
 
   HomeScreen({
     required this.onNavigateToInquiry,
     required this.onNavigateToFAQ,
     required this.onNavigateToResult, // 추가
+    required this.onNavigateToMap, // 추가
   });
 
   @override
@@ -211,39 +213,42 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   // 지도 섹션
                   Expanded(
-                    child: Container(
-                      height: 250,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Color(0xFF599468)),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            '우리 동네',
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Color(0xFF599468),
-                                fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                          Text(
-                            '폐기물 스티커 판매점 찾기',
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: Color(0xFF5F5F5F),
-                                fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: 10),
-                          Expanded(
-                            child: Image.asset(
-                              'assets/map_placeholder.png',
-                              fit: BoxFit.cover,
+                    child: GestureDetector(
+                      onTap: widget.onNavigateToMap, // 지도 클릭 시 콜백 호출
+                      child: Container(
+                        height: 250,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Color(0xFF599468)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '우리 동네',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Color(0xFF599468),
+                                  fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
                             ),
-                          ),
-                        ],
+                            Text(
+                              '폐기물 스티커 판매점 찾기',
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: Color(0xFF5F5F5F),
+                                  fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 10),
+                            Expanded(
+                              child: Image.asset(
+                                'assets/map_placeholder.png',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
