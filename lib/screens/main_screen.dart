@@ -4,6 +4,7 @@ import 'my_profile_screen.dart';
 import 'search_screen.dart';
 import 'inquiry_screen.dart';
 import 'inquiry_create_screen.dart';
+import 'inquiry_detail_screen.dart';
 import 'faq_screen.dart';
 import 'result_screen.dart';
 import 'history_screen.dart';
@@ -71,6 +72,7 @@ class _MainScreenState extends State<MainScreen> {
           });
         },
         onNavigateToInquiryCreate: _navigateToInquiryCreateScreen, // 콜백 전달
+        onNavigateToInquiryDetail: _navigateToInquiryDetailScreen, // 상세 페이지로 이동 콜백 전달
       );
     });
   }
@@ -83,6 +85,33 @@ class _MainScreenState extends State<MainScreen> {
       );
     });
   }
+
+// InquiryDetailScreen으로 이동
+  void _navigateToInquiryDetailScreen(Map<String, dynamic> inquiryData) {
+    setState(() {
+      _currentScreen = InquiryDetailScreen(
+        inquiryData: inquiryData, // 서버에서 가져온 데이터 전달
+        onNavigateBack: () {
+          setState(() {
+            _currentScreen = InquiryScreen(
+              onNavigateBack: () {
+                setState(() {
+                  _currentScreen = HomeScreen(
+                    onNavigateToInquiry: _navigateToInquiryScreen,
+                    onNavigateToFAQ: _navigateToFAQScreen,
+                    onNavigateToResult: _navigateToTextResultScreen,
+                  );
+                });
+              },
+              onNavigateToInquiryCreate: _navigateToInquiryCreateScreen, // 문의 생성 화면으로 이동
+              onNavigateToInquiryDetail: _navigateToInquiryDetailScreen, // 상세 페이지로 이동 콜백 전달
+            );
+          });
+        },
+      );
+    });
+  }
+
 
   // FAQ 화면으로 이동
   void _navigateToFAQScreen() {

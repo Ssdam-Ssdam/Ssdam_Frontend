@@ -7,11 +7,14 @@ import 'package:intl/intl.dart'; // 날짜 포맷을 위한 intl 패키지
 class InquiryScreen extends StatefulWidget {
   final VoidCallback onNavigateBack;
   final VoidCallback onNavigateToInquiryCreate; // InquiryCreateScreen으로 이동 콜백 추가
+  final Function(Map<String, dynamic>) onNavigateToInquiryDetail;
 
   const InquiryScreen({
     super.key,
     required this.onNavigateBack,
     required this.onNavigateToInquiryCreate, // 콜백 초기화
+    required this.onNavigateToInquiryDetail,
+
   });
 
   @override
@@ -102,7 +105,37 @@ class _InquiryScreenState extends State<InquiryScreen> {
     }
   }
 
+  Future<Map<String, dynamic>?> _fetchInquiryDetail(int inquiryId) async {
+    final String detailUrl = "http://10.0.2.2:3000/inquiry/view?inquiryId=$inquiryId";
 
+    try {
+      final token = await SecureStorageUtil.getToken();
+      if (token == null) {
+        print("토큰이 없습니다. 로그인이 필요합니다.");
+        return null; // 토큰이 없으면 null 반환
+      }
+
+      final headers = {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      };
+      print("Fetching details for inquiryId: $inquiryId");
+
+      final response = await http.get(Uri.parse(detailUrl), headers: headers);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        print("상세 데이터: $responseData");
+        return responseData; // 서버에서 받은 데이터 반환
+      } else {
+        print("상세 데이터를 가져오지 못했습니다. 상태 코드: ${response.statusCode}");
+        return null; // 실패 시 null 반환
+      }
+    } catch (error) {
+      print("네트워크 오류: $error");
+      return null; // 오류 발생 시 null 반환
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -196,66 +229,77 @@ class _InquiryScreenState extends State<InquiryScreen> {
                 itemCount: inquiries.length,
                 itemBuilder: (context, index) {
                   final inquiry = inquiries[index];
-                  return Column(
-                    children: [
-                      Card(
-                        color: Colors.white,
-                        elevation: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    _formatDate(inquiry['created_at']),
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Color(0xFFB6B6B6),
-                                    ),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      // 상태 버튼 동작 정의
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white,
-                                      side: BorderSide(color: Color(0xFFD9D9D9)),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      minimumSize: Size(78, 31),
-                                    ),
-                                    child: Text(
-                                      _getStatusText(inquiry['res_status']),
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: _getStatusColor(inquiry['res_status']),
-                                      ),
-                                    ),
-                                  ),
+                  return GestureDetector(
+                    onTap: () async {
+                      final inquiryId = inquiry['inquiryId'];
+                      final responseData = await _fetchInquiryDetail(inquiryId); // 상세 데이터 가져오기
 
-                                ],
-                              ),
-                              SizedBox(height: 7),
-                              Text(
-                                inquiry['title'] ?? '',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.black),
-                              ),
-                            ],
+                      if (responseData != null) {
+                        widget.onNavigateToInquiryDetail(responseData); // 상세 페이지로 이동
+                      } else {
+                        print("상세 데이터를 가져오는 데 실패했습니다.");
+                      }
+                    },
+
+
+                    child: Column(
+                      children: [
+                        Card(
+                          color: Colors.white,
+                          elevation: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      _formatDate(inquiry['created_at']),
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Color(0xFFB6B6B6),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 12.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white, // 배경 흰색
+                                        border: Border.all(
+                                            color: _getStatusColor(inquiry['res_status'])), // 상태 색상
+                                        borderRadius: BorderRadius.circular(20.0), // 둥근 테두리
+                                      ),
+                                      child: Text(
+                                        _getStatusText(inquiry['res_status']),
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: _getStatusColor(inquiry['res_status']), // 상태 색상
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 7),
+                                Text(
+                                  inquiry['title'] ?? '',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Divider(),
-                    ],
+                        Divider(),
+                      ],
+                    ),
                   );
                 },
               ),
-            ),
+            )
           ],
         ),
       ),

@@ -1,0 +1,154 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // 날짜 포맷팅을 위한 패키지
+
+class InquiryDetailScreen extends StatefulWidget {
+  final VoidCallback onNavigateBack;
+  final Map<String, dynamic> inquiryData;
+
+  const InquiryDetailScreen({
+    super.key,
+    required this.onNavigateBack,
+    required this.inquiryData,
+  });
+
+  @override
+  _InquiryDetailScreenState createState() => _InquiryDetailScreenState();
+}
+
+class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
+  // 날짜 포맷 함수
+  String formatDate(String date) {
+    try {
+      final DateTime parsedDate = DateTime.parse(date);
+      return DateFormat('yyyy-MM-dd HH:mm').format(parsedDate); // 원하는 형식으로 포맷
+    } catch (e) {
+      return '날짜 없음'; // 날짜 파싱 실패 시 기본 값
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final inquiryData = widget.inquiryData;
+    final questionTitle = inquiryData['title'] ?? '제목 없음';
+    final questionDate = inquiryData['created_at'] != null
+        ? formatDate(inquiryData['created_at']) // 날짜 포맷 적용
+        : '날짜 없음';
+    final questionContent = inquiryData['content'] ?? '문의 내용이 없습니다.';
+    final answerContent = inquiryData['res_message'] ?? '곧 답변 드리겠습니다. 조금만 기다려주세요 :)';
+    final resDate = inquiryData['res_date'] != null
+        ? formatDate(inquiryData['res_date']) // 날짜 포맷 적용
+        : '답변 날짜 없음';
+
+    final isNoAnswer = answerContent == '곧 답변 드리겠습니다. 조금만 기다려주세요 :)';
+
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 상단바
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: widget.onNavigateBack,
+                      child: Image.asset(
+                        'assets/backbutton.png',
+                        height: 40,
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      '1:1 문의',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // 제목
+            SizedBox(height: 10),
+            Text(
+              questionTitle,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            SizedBox(height: 10),
+            // 날짜
+            Text(
+              questionDate,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+              ),
+            ),
+            SizedBox(height: 20),
+            // 질문 내용
+            Text(
+              questionContent,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
+              ),
+            ),
+            SizedBox(height: 30),
+            // 답변 박스
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: isNoAnswer ? Colors.grey[200] : Color(0xFFF0F9F0), // 답변 여부에 따라 배경색 설정
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "A.",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: isNoAnswer ? Colors.grey : Color(0xFF599468), // 글자 색도 조건부 변경
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    answerContent,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87, // 텍스트는 동일한 색상 유지
+                    ),
+                  ),
+                  if (!isNoAnswer) // 답변이 있는 경우에만 답변 날짜 표시
+                    SizedBox(height: 10),
+                  if (!isNoAnswer)
+                    Text(
+                      "답변 날짜: $resDate",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
