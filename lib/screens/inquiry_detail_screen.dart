@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart'; // 날짜 포맷팅을 위한 패키지
 
 class InquiryDetailScreen extends StatefulWidget {
@@ -25,6 +27,48 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
       return '날짜 없음'; // 날짜 파싱 실패 시 기본 값
     }
   }
+
+  // 삭제 요청 함수
+  Future<void> _deleteInquiry() async {
+    final String url = 'http://10.0.2.2:3000/inquiry/delete';
+    final inquiryId = widget.inquiryData['inquiryId'];
+
+    try {
+      final response = await http.delete(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'inquiryId': inquiryId}),
+      );
+
+      if (response.statusCode == 200) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('삭제되었습니다'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  widget.onNavigateBack(); // InquiryScreen으로 이동
+                },
+                child: Text('확인'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        final errorResponse = jsonDecode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('에러 발생: ${errorResponse['message']}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('네트워크 에러 발생: $e')),
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +188,30 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
                       ),
                     ),
                 ],
+              ),
+            ),
+            SizedBox(height: 30),
+            // 삭제 버튼
+            Align(
+              alignment: Alignment.bottomRight,
+              child: GestureDetector(
+                onTap: _deleteInquiry,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 20.0),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF599468),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '삭제',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
