@@ -9,6 +9,7 @@
     <application
         android:label="p_project"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
 
         <activity
@@ -28,7 +29,6 @@
 
             <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
-                android:value="AIzaSyD2fr1iE1dvhHJr3mXfMQpY2a51KTU5Xjs"
               android:resource="@style/NormalTheme"
               />
             <intent-filter>

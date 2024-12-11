@@ -91,7 +91,7 @@ class _ResultScreenState extends State<ResultScreen> {
 
 
     Future<void> _sendFeedback(int isGood) async {
-    final String url = "http://10.0.2.2:3000/lar-waste/feedback"; // 서버 URL
+    final String url = "http://3.38.250.18:3000/lar-waste/feedback"; // 서버 URL
 
     // 피드백을 보내기 전에 waste_name을 결정
     String feedbackWasteName = _wasteName!;  // 기본적으로 AI 분류 결과의 waste_name 사용
@@ -151,7 +151,7 @@ class _ResultScreenState extends State<ResultScreen> {
       final token = await SecureStorageUtil.getToken();
 
       // URL에 검색어를 포함
-      final Uri uri = Uri.parse('http://10.0.2.2:3000/lar-waste/search').replace(
+      final Uri uri = Uri.parse('http://3.38.250.18:3000/lar-waste/search').replace(
         queryParameters: {
           'waste_name': query, // 검색어 추가
         },

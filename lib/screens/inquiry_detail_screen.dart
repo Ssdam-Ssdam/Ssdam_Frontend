@@ -30,7 +30,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
 
   // 삭제 요청 함수
   Future<void> _deleteInquiry() async {
-    final String url = 'http://10.0.2.2:3000/inquiry/delete';
+    final String url = 'http://3.38.250.18:3000/inquiry/delete';
     final inquiryId = widget.inquiryData['inquiryId'];
 
     try {

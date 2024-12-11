@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../secure_storage_util.dart';
 import 'login_screen.dart';
+import 'package:daum_postcode_search/daum_postcode_search.dart'; // 주소_추가
 
 class MyProfileScreen extends StatefulWidget {
   final VoidCallback onNavigateToHistory;
@@ -16,6 +17,8 @@ class MyProfileScreen extends StatefulWidget {
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
   bool isEditing = false; // 현재 프로필 수정 화면인지 여부
+  bool _isError = false;
+  String? errorMessage;
 
   final TextEditingController _userIdController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -23,6 +26,10 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _sim_addressController = TextEditingController();
+  final TextEditingController _regionController = TextEditingController(); // 주소 컨트롤러-시도
+  final TextEditingController _subRegionController = TextEditingController(); // 주소 컨트롤러-시군구
+  final TextEditingController _streetController = TextEditingController(); // 주소 컨트롤러-도로명값
+  final TextEditingController _zonecodeController = TextEditingController(); // 주소 컨트롤러-우편번호
 
   @override
   void initState() {
@@ -32,7 +39,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   // 프로필 정보 조회 (GET 요청)
   Future<void> _fetchProfile() async {
-    final String url = "http://10.0.2.2:3000/user/profile"; // Node.js 서버 URL
+    final String url = "http://3.38.250.18:3000/user/profile"; // Node.js 서버 URL
 
     try {
       final token = await SecureStorageUtil.getToken(); // 저장된 토큰 가져오기
@@ -69,22 +76,45 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
 // 프로필 정보 수정 (PUT 요청)
   Future<void> _updateProfile() async {
-    final String url = "http://10.0.2.2:3000/user/profile/update"; // Node.js 서버 URL
+    final String url = "http://3.38.250.18:3000/user/profile/update"; // Node.js 서버 URL
 
     final String userId = _userIdController.text;
     final String password = _passwordController.text;
     final String name = _nameController.text;
     final String email = _emailController.text;
+    final String address = _addressController.text;
+    final String region = _regionController.text.trim(); // 주소 입력값 가져오기
+    final String sub_region = _subRegionController.text.trim(); // 주소 입력값 가져오기
+    final String street = _streetController.text.trim(); // 주소 입력값 가져오기
+    final String zonecodeStr = _zonecodeController.text.trim(); // 주소 입력값 가져오기
+    // final zonecode = int.parse(zonecodeStr); // 정수로 변환
+
+    int zonecode = 0;  // 기본값 설정
+    try {
+      zonecode = int.parse(zonecodeStr); // 정수로 변환
+    } catch (e) {
+      print("Zonecode 변환 오류: $e");
+    }
 
     try {
+      final token = await SecureStorageUtil.getToken(); // 저장된 토큰 가져오기
+
       final response = await http.put(
         Uri.parse(url),
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Authorization": "Bearer $token", // 토큰 추가
+          "Content-Type": "application/json"
+        },
         body: json.encode({
           "userId": userId,
           "password": password,
           "name": name,
           "email": email,
+          "region": region,
+          "sub_region": sub_region,
+          "street": street,
+          "full_address": address,
+          "zonecode": zonecode,
         }),
       );
 
@@ -200,6 +230,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ),
               ),
               SizedBox(height: 20),
+
               TextField(
                 controller: _nameController, // name 컨트롤러 연결
                 decoration: InputDecoration(
@@ -213,8 +244,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ),
               ),
               SizedBox(height: 20),
+
               TextField(
-                controller: _addressController, // email 컨트롤러 연결
+                controller: _emailController, // email 컨트롤러 연결
                 decoration: InputDecoration(
                   hintText: '이메일',
                   border: OutlineInputBorder(
@@ -225,6 +257,78 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   fillColor: Color(0xFFF5F5F5),
                 ),
               ),
+              SizedBox(height: 20),
+
+              // 주소 입력 필드 + 검색 버튼
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _addressController,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        hintText: '주소',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Color(0xFFF5F5F5),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () async {
+
+                      // 주소 검색 화면 띄우기
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DaumPostcodeSearch(
+                            onConsoleMessage: (_, message) {
+                              print("Console Message: $message");
+                            },
+                            onReceivedError: (controller, request, error) {
+                              setState(() {
+                                _isError = true;
+                                errorMessage = error.description;
+                              });
+                            },
+                          ),
+                        ),
+                      );
+
+                      // 반환된 데이터가 DataModel 객체인지 확인하고 사용
+                      if (result is DataModel) {
+                        setState(() {
+                          // 주소 및 추가 정보를 각 컨트롤러에 설정
+                          _addressController.text = result.address;
+                          _regionController.text = result.sido;
+                          _subRegionController.text = result.sigungu;
+                          _streetController.text = result.roadname;
+                          _zonecodeController.text = result.zonecode;
+                        });
+                      } else {
+                        print("Invalid data type returned: $result");
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[350],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      minimumSize: Size(60, 50),
+                    ),
+                    child: Icon(
+                      Icons.search,
+                      color: Color(0xFF599468),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+
             ],
           ),
         ),

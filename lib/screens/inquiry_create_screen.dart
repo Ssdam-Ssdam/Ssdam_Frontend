@@ -26,7 +26,7 @@ class _InquiryCreateScreenState extends State<InquiryCreateScreen> {
       return;
     }
 
-    final String url = 'http://10.0.2.2:3000/inquiry/create'; // 실제 서버 URL로 변경
+    final String url = 'http://3.38.250.18:3000/inquiry/create'; // 실제 서버 URL로 변경
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',

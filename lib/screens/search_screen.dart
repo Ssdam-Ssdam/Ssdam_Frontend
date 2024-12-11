@@ -4,7 +4,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'dart:convert';
-import 'result_screen.dart';
 import '../secure_storage_util.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -42,7 +41,7 @@ class _SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    final String url = "http://10.0.2.2:3000/lar-waste/upload";
+    final String url = "http://3.38.250.18:3000/lar-waste/upload";
 
     try {
       final token = await SecureStorageUtil.getToken();

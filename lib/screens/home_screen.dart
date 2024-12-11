@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final token = await SecureStorageUtil.getToken();
 
       // URL에 검색어를 포함
-      final Uri uri = Uri.parse('http://10.0.2.2:3000/lar-waste/search').replace(
+      final Uri uri = Uri.parse('http://3.38.250.18:3000/lar-waste/search').replace(
         queryParameters: {
           'waste_name': searchQuery, // 검색어 추가
         },

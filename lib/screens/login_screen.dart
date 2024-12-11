@@ -20,7 +20,7 @@ class LoginScreen extends StatelessWidget {
       return; // 서버 요청을 중단
     }
 
-    final String url = "http://10.0.2.2:3000/user/login";
+    final String url = "http://3.38.250.18:3000/user/login";
 
     try {
       final response = await http.post(
@@ -28,6 +28,12 @@ class LoginScreen extends StatelessWidget {
         headers: {"Content-Type": "application/json"},
         body: json.encode({"userId": userId, "password": password}),
       );
+
+      // 디버깅용 로그 추가
+      print('Request sent to: $url');
+      print('Request body: ${jsonEncode({"userId": userId, "password": password})}');
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);

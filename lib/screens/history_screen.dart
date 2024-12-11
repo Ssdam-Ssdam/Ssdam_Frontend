@@ -18,7 +18,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Future<void> _fetchHistoryData() async {
-    final url = Uri.parse('http://10.0.2.2:3000/user/history'); // 서버 URL
+    final url = Uri.parse('http://3.38.250.18:3000/user/history'); // 서버 URL
     try {
       final token = await SecureStorageUtil.getToken();
       if (token == null) {

@@ -24,7 +24,7 @@ class InquiryScreen extends StatefulWidget {
 class _InquiryScreenState extends State<InquiryScreen> {
   String selectedValue = '전체'; // 드롭다운 초기값
   List<Map<String, dynamic>> inquiries = []; // 문의 데이터 리스트
-  final String url = "http://10.0.2.2:3000/inquiry/view-all"; // 서버 URL
+  final String url = "http://3.38.250.18:3000/inquiry/view-all"; // 서버 URL
 
   @override
   void initState() {
@@ -106,7 +106,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
   }
 
   Future<Map<String, dynamic>?> _fetchInquiryDetail(int inquiryId) async {
-    final String detailUrl = "http://10.0.2.2:3000/inquiry/view?inquiryId=$inquiryId";
+    final String detailUrl = "http://3.38.250.18:3000/inquiry/view?inquiryId=$inquiryId";
 
     try {
       final token = await SecureStorageUtil.getToken();
