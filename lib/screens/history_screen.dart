@@ -99,7 +99,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             ClipRRect(
                               //borderRadius: BorderRadius.circular(8),
                               child: Image.network(
-                                'http://10.0.2.2:3000$filePath',
+                                'http://3.38.250.18:3000$filePath',
                                 height: 100,
                                 width: 100,
                                 fit: BoxFit.cover,
