@@ -38,6 +38,7 @@ class _ResultScreenState extends State<ResultScreen> {
   bool _isButtonClicked = false; // 좋아요/싫어요 버튼 클릭 여부
   String? _wasteName; // 서버에서 받아온 폐기물 이름
   double? _accuracy; // 서버에서 받아온 정확도
+  String? feedbackWasteName;
   String? _imgId;
   String? _errorMessage;
   List<Map<String, dynamic>> _wasteFees = []; // waste_fees 데이터 저장 리스트
@@ -93,14 +94,6 @@ class _ResultScreenState extends State<ResultScreen> {
     Future<void> _sendFeedback(int isGood) async {
     final String url = "http://3.38.250.18:3000/lar-waste/feedback"; // 서버 URL
 
-    // 피드백을 보내기 전에 waste_name을 결정
-    String feedbackWasteName = _wasteName!;  // 기본적으로 AI 분류 결과의 waste_name 사용
-
-    // 싫어요가 클릭되었고 사용자가 검색한 결과가 있다면
-    if (!_isLike && _searchResults.isNotEmpty) {
-      feedbackWasteName = _searchResults[0]['waste_name'];
-    }
-
     try {
       final token = await SecureStorageUtil.getToken(); // 저장된 토큰 가져오기
 
@@ -113,7 +106,7 @@ class _ResultScreenState extends State<ResultScreen> {
         body: jsonEncode({
           'imgId': _imgId, // 이미지 ID 전달**fix**
           'is_good': isGood, // 좋아요/싫어요 상태 전달
-          'waste_name': feedbackWasteName,
+          'waste_name': feedbackWasteName ?? _wasteName, // 검색값 없을 시 기본값 사용
         }),
       );
 
@@ -176,6 +169,7 @@ class _ResultScreenState extends State<ResultScreen> {
 
         setState(() {
           _searchResults = wastes;
+          feedbackWasteName = query; // 검색창의 입력값을 feedbackWasteName에 반영
           _isLoading = false; // Add this to stop loading indicator
         });
       } else {
