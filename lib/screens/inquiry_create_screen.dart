@@ -93,7 +93,7 @@ class _InquiryCreateScreenState extends State<InquiryCreateScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(right: 16, bottom: 16, left:16, top:27),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

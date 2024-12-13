@@ -95,7 +95,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
           children: [
             // 상단바
             Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
+              padding: const EdgeInsets.only(bottom: 16.0, top: 11),
               child: Stack(
                 children: [
                   Align(

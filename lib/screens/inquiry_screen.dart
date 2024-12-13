@@ -142,7 +142,8 @@ class _InquiryScreenState extends State<InquiryScreen> {
     return Scaffold(
       backgroundColor: Colors.white, // 배경색 흰색 설정
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        // padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(right: 16, bottom: 16, left:16, top:23),
         child: Column(
           children: [
             Row(

@@ -120,7 +120,7 @@ class _SearchScreenState extends State<SearchScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.only(right: 16, bottom: 16, left:16, top:25),
             child: Column(
               children: [
                 Text(

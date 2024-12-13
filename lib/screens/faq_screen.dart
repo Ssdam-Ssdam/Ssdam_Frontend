@@ -41,7 +41,7 @@ class _FAQScreenState extends State<FAQScreen> {
         children: [
           // 상단바 역할
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.only(right: 16, bottom: 16, left:16, top:25),
             child: Stack(
               children: [
                 // 뒤로 가기 버튼 (왼쪽 정렬)

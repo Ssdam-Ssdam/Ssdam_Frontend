@@ -53,7 +53,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.only(right: 16, left:16, top:25),
             child: _historyData.isEmpty
                 ? const Center(
               child: Text(

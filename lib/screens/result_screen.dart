@@ -221,7 +221,7 @@ class _ResultScreenState extends State<ResultScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.only(right: 16, left:16, top:25),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
