@@ -42,7 +42,7 @@ class _SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    final String url = "http://3.38.250.18:3000/lar-waste/upload";
+    final String url = "http://13.124.47.191:3000/lar-waste/upload";
 
     try {
       setState(() {
@@ -70,6 +70,9 @@ class _SearchScreenState extends State<SearchScreen> {
         print('Response Body: ${responseData.body}');
         final Map<String, dynamic> data = json.decode(responseData.body);
         print('Parsed Data: $data');
+
+        Navigator.pop(context);
+
         // 콜백 호출로 ResultScreen으로 이동
         if (widget.onNavigateToResult != null) {
           final Map<String, dynamic> data = json.decode(responseData.body);
@@ -94,9 +97,11 @@ class _SearchScreenState extends State<SearchScreen> {
         }
       } else {
         _showAlert('이미지 업로드 실패: 상태 코드 ${response.statusCode}');
+        Navigator.pop(context);  // 오류 발생 시에도 로딩 종료
       }
     } catch (error) {
       _showAlert('네트워크 오류: $error');
+      Navigator.pop(context);  // 오류 발생 시에도 로딩 종료
     } finally {
       setState(() {
         isLoading = false; // 업로드가 끝나면 로딩 상태를 false로 설정
@@ -149,7 +154,7 @@ class _SearchScreenState extends State<SearchScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(right: 16, bottom: 16, left:16, top:25),
+            padding: const EdgeInsets.only(right: 16, bottom: 16, left:16, top:20),
             child: Column(
               children: [
                 Text(
@@ -170,9 +175,9 @@ class _SearchScreenState extends State<SearchScreen> {
                             borderRadius: BorderRadius.circular(16),
                             child: Image.file(
                               _selectedImage!,
-                              height: 310,
-                              width: 340,
-                              fit: BoxFit.cover,
+                              width: 290,  // 이미지 컨테이너의 너비
+                              height: 300, // 이미지 컨테이너의 높이
+                              fit: BoxFit.cover, // 이미지 비율 유지하면서 컨테이너 크기에 맞게 잘림
                             ),
                           ),
                           SizedBox(height: 20),

@@ -19,8 +19,7 @@ class LoginScreen extends StatelessWidget {
       _showErrorDialog(context, "아이디와 비밀번호를 모두 입력해주세요.");
       return; // 서버 요청을 중단
     }
-
-    final String url = "http://3.38.250.18:3000/user/login";
+    final String url = "http://13.124.47.191:3000/user/login";
 
     try {
       final response = await http.post(

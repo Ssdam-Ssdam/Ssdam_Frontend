@@ -39,7 +39,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   // 프로필 정보 조회 (GET 요청)
   Future<void> _fetchProfile() async {
-    final String url = "http://3.38.250.18:3000/user/profile"; // Node.js 서버 URL
+    final String url = "http://13.124.47.191:3000/user/profile"; // Node.js 서버 URL
 
     try {
       final token = await SecureStorageUtil.getToken(); // 저장된 토큰 가져오기
@@ -76,7 +76,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
 // 프로필 정보 수정 (PUT 요청)
   Future<void> _updateProfile() async {
-    final String url = "http://3.38.250.18:3000/user/profile/update"; // Node.js 서버 URL
+    final String url = "http://13.124.47.191:3000/user/profile/update"; // Node.js 서버 URL
 
     final String userId = _userIdController.text;
     final String password = _passwordController.text;
