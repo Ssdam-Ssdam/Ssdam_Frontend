@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import '../secure_storage_util.dart';
 
@@ -23,10 +24,17 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   // 기존 배너 이미지 목록
   final List<String> bannerImages = [
-    'assets/banner.png',
     'assets/banner1.png',
     'assets/banner2.png',
     'assets/banner3.png',
+    'assets/banner4.png',
+  ];
+
+  final List<String?> bannerUrls = [
+    null,
+    'https://15990903.or.kr/portal/main/main.do',  // 두 번째 배너 이미지에 연결될 URL
+    'https://www.koreagreen.org/',  // 세 번째 배너 이미지에 연결될 URL
+    null
   ];
 
   late PageController _pageController;
@@ -71,6 +79,23 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  void _onBannerTap(int index) async {
+    final url = bannerUrls[index];
+    if (url != null) {
+      // URL이 있을 경우에만 웹 브라우저에서 URL 열기
+      print('배너 클릭됨: $url');
+      // Uri 객체로 URL을 전달
+      final Uri uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);  // launchUrl로 URL 열기
+      } else {
+        print("URL을 열 수 없습니다.");
+      }
+    } else {
+      print('첫 번째 배너는 URL이 없습니다.');
+    }
   }
 
   // 텍스트 검색 요청
@@ -159,13 +184,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     });
                   },
                   itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0), // Padding 값을 줄여서 양옆 보이는 부분을 줄임
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(
-                          bannerImages[index],
-                          fit: BoxFit.cover,
+                    return GestureDetector(
+                      onTap: () => _onBannerTap(index),  // 배너 클릭 시 URL로 이동
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.asset(
+                            bannerImages[index],
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     );
