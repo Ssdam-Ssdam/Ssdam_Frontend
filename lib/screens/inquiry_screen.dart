@@ -159,7 +159,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
                   '1:1 문의',
                   style: TextStyle(
                     color: Colors.black,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     fontSize: 25,
                   ),
                 ),

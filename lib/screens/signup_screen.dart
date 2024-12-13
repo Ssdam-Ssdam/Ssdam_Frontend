@@ -136,7 +136,7 @@ class SignupScreenState extends State<SignupScreen> {
                 '회원가입',
                 style: TextStyle(
                   fontSize: 32,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                   color: Colors.black,
                 ),
                 textAlign: TextAlign.center,

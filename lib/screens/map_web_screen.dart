@@ -97,7 +97,7 @@ class _MapWebScreenState extends State<MapWebScreen> {
           title: Text(
             store['판매소명'] ?? '알 수 없음',
             style: TextStyle(
-              fontWeight: FontWeight.bold, // 텍스트를 Bold로 설정
+              fontWeight: FontWeight.w600, // 텍스트를 w600// 로 설정
             ),
           ),
           content: Column(

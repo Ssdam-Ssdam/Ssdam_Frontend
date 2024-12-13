@@ -62,7 +62,7 @@ class _FAQScreenState extends State<FAQScreen> {
                     '자주 묻는 질문',
                     style: TextStyle(
                       color: Colors.black,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                       fontSize: 25,
                     ),
                   ),
@@ -86,7 +86,7 @@ class _FAQScreenState extends State<FAQScreen> {
                   child: ExpansionTile(
                     title: Text(
                       faqs[index]['question']!,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     children: [
                       Padding(

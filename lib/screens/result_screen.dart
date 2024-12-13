@@ -230,7 +230,7 @@ class _ResultScreenState extends State<ResultScreen> {
                   'AI 분석 결과',
                   style: TextStyle(
                     color: Colors.black,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     fontSize: 25,
                   ),
                 ),
@@ -255,7 +255,7 @@ class _ResultScreenState extends State<ResultScreen> {
                             text: '대형폐기물은 ', // 기본 텍스트
                             style: TextStyle(
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w600,
                               color: Color(0xFF5F5F5F), // 기본 색상
                             ),
                           ),
@@ -263,7 +263,7 @@ class _ResultScreenState extends State<ResultScreen> {
                             text: '$_wasteName', // wasteName 텍스트
                             style: TextStyle(
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w600,
                               color: Color(0xFF599468), // wasteName 색상 변경
                             ),
                           ),
@@ -271,7 +271,7 @@ class _ResultScreenState extends State<ResultScreen> {
                             text: ' 입니다!',
                             style: TextStyle(
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w600,
                               color: Color(0xFF5F5F5F), // 기본 색상
                             ),
                           ),

@@ -114,7 +114,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
                       '1:1 문의',
                       style: TextStyle(
                         color: Colors.black,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                         fontSize: 25,
                       ),
                     ),
@@ -128,7 +128,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
               questionTitle,
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
             ),
@@ -165,7 +165,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
                     "A.",
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                       color: isNoAnswer ? Colors.grey : Color(0xFF599468), // 글자 색도 조건부 변경
                     ),
                   ),
@@ -208,7 +208,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 15,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),

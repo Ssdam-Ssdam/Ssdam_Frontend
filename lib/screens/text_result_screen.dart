@@ -25,7 +25,7 @@ class TextResultScreen extends StatelessWidget {
                 '검색 결과',
                 style: TextStyle(
                   color: Colors.black,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                   fontSize: 25,
                 ),
               ),

@@ -139,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   homeMessage!,
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF599468),
                   ),
                   textAlign: TextAlign.center,
@@ -291,7 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: TextStyle(
                                     color: Color(0xFF5F5F5F),
                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.w600),
                                 textAlign: TextAlign.center,
                               ),
                             ],
@@ -320,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: TextStyle(
                                     color: Color(0xFF5F5F5F),
                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.w600),
                                 textAlign: TextAlign.center,
                               ),
                             ],

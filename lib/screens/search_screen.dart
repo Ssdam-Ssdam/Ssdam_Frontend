@@ -174,7 +174,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               style: TextStyle(
                                 color: Color(0xFF5F5F5F),
                                 fontSize: 16,
-                                fontWeight: FontWeight.bold),
+                                fontWeight: FontWeight.w600),
                               textAlign: TextAlign.center,
                             ),
                           ],
@@ -189,8 +189,8 @@ class _SearchScreenState extends State<SearchScreen> {
                               InkWell(
                                 onTap: () => _pickImage(ImageSource.gallery),
                                 child: Container(
-                                  width: 115,
-                                  height: 90,
+                                  width: 120,
+                                  height: 100,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
@@ -207,8 +207,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                         '갤러리',
                                         style: TextStyle(
                                           color: Color(0xFF5F5F5F),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                     ],
@@ -219,8 +219,8 @@ class _SearchScreenState extends State<SearchScreen> {
                               InkWell(
                                 onTap: () => _pickImage(ImageSource.camera),
                                 child: Container(
-                                  width: 115,
-                                  height: 90,
+                                  width: 120,
+                                  height: 100,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
@@ -237,8 +237,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                         '카메라',
                                         style: TextStyle(
                                           color: Color(0xFF5F5F5F),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                     ],
@@ -248,7 +248,6 @@ class _SearchScreenState extends State<SearchScreen> {
                             ],
                           ),
                         ),
-                        SizedBox(width: 8), // 간격 조정
                         Container(
                           width: 135,
                           height: 130,
@@ -267,27 +266,27 @@ class _SearchScreenState extends State<SearchScreen> {
                                 text: TextSpan(
                                   style: TextStyle(
                                     color: Color(0xFF5F5F5F),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                   children: [
                                     TextSpan(
                                       text: '나의 대형 폐기물\n', // 첫 번째 텍스트 부분
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 15,
                                       ),
                                     ),
                                     TextSpan(
                                       text: '수수료', // "수수료" 부분
                                       style: TextStyle(
-                                        fontSize: 20, // 글자 크기 키움
+                                        fontSize: 21, // 글자 크기 키움
                                         color: Color(0xFF599468), // 색상 지정
                                       ),
                                     ),
                                     TextSpan(
                                       text: ' 찾기', // 나머지 텍스트 부분
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 15,
                                       ),
                                     ),
                                   ],

@@ -192,7 +192,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             'EDIT PROFILE',
             style: TextStyle(
               color: Colors.black,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
               fontSize: 24,
             ),
           ),
@@ -376,7 +376,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         'MY PROFILE',
                         style: TextStyle(
                           color: Colors.black,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                           fontSize: 24,
                         ),
                       ),
@@ -405,7 +405,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           children: [
                             Text(
                               _userIdController.text, // userId 표시
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                             ),
                             Text(
                               'My Location : ${_sim_addressController.text}', // address 표시

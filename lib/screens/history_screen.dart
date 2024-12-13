@@ -70,7 +70,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     'AI 분석 결과',
                     style: TextStyle(
                       color: Colors.black,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                       fontSize: 25,
                     ),
                   ),
@@ -110,7 +110,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             wasteName ?? '알 수 없는 폐기물',
                             style: const TextStyle(
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w600,
                               color: Color(0xFF5F5F5F),
                             ),
                           ),
@@ -128,14 +128,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     padding: EdgeInsets.all(4.0), // 패딩 줄이기
                                     child: Text(
                                       '폐기물 기준',
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14), // 텍스트 크기 줄이기
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14), // 텍스트 크기 줄이기
                                     ),
                                   ),
                                   Padding(
                                     padding: EdgeInsets.all(4.0),
                                     child: Text(
                                       '요금',
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                                     ),
                                   ),
                                 ],

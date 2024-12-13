@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false, // 디버그 배너 제거
       title: '쓰담쓰담', // 앱 제목
       theme: ThemeData(
-        primarySwatch: Colors.green, // 기본 테마 색상
+        fontFamily: "Pretendard"
       ),
       home: LoginScreen(), // LoginScreen 호출
     );

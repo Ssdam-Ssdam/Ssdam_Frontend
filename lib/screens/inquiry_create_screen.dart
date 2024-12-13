@@ -118,7 +118,7 @@ class _InquiryCreateScreenState extends State<InquiryCreateScreen> {
                       '1:1 문의 접수',
                       style: TextStyle(
                         color: Colors.black,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                         fontSize: 25,
                       ),
                     ),
@@ -186,7 +186,7 @@ class _InquiryCreateScreenState extends State<InquiryCreateScreen> {
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 15,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
