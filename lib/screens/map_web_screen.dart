@@ -21,6 +21,7 @@ class _MapWebScreenState extends State<MapWebScreen> {
   final String serverUrl = 'http://3.38.250.18:3000/lar-waste/nearby-stores';
   LatLng? userLocation;
   List<Marker> storeMarkers = [];
+  List<Map<String, dynamic>> storeData = [];
 
   @override
   void initState() {
@@ -57,17 +58,22 @@ class _MapWebScreenState extends State<MapWebScreen> {
             double.parse(data['user_lon']),
           );
 
-          storeMarkers = (data['locations'] as List).map<Marker>((location) {
+          storeData = List<Map<String, dynamic>>.from(data['locations']);
+
+          storeMarkers = storeData.map<Marker>((location) {
             return Marker(
               point: LatLng(location['latitude'], location['longitude']),
               width: 40.0,
               height: 40.0,
               rotate: true,
               alignment: Alignment.center,
-              child: const Icon(
-                Icons.location_on,
-                color: Colors.red,
-                size: 40.0,
+              child: GestureDetector(
+                onTap: () => showStoreInfoDialog(location), // 클릭 이벤트 연결
+                child: const Icon(
+                  Icons.location_on,
+                  color: Colors.red,
+                  size: 40.0,
+                ),
               ),
             );
           }).toList();
@@ -83,12 +89,56 @@ class _MapWebScreenState extends State<MapWebScreen> {
     }
   }
 
+  void showStoreInfoDialog(Map<String, dynamic> store) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            store['판매소명'] ?? '알 수 없음',
+            style: TextStyle(
+              fontWeight: FontWeight.bold, // 텍스트를 Bold로 설정
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('주소: ${store['주소'] ?? '정보 없음'}',
+                style: TextStyle(
+                  color: Color(0xFF599468),
+                  fontSize: 16,
+                ),
+              ),
+              Text(''),
+              Text('나와의 거리: ${(store['distance'] as double).toStringAsFixed(2)} km',
+                style: TextStyle(
+                  color: Color(0xFF599468),
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('닫기'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Nearby Stores'),
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: widget.onNavigateBack,
