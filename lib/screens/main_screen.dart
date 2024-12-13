@@ -242,27 +242,47 @@ class _MainScreenState extends State<MainScreen> {
         toolbarHeight: 60, // 높이를 원하는 값으로 조정 (예: 80으로 설정)
       ),
       body: _currentScreen,
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,  // 배경색을 흰색으로 설정
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '홈',
+      bottomNavigationBar: Container(
+        height: 60, // BottomNavigationBar 높이 설정
+        child: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
+                size: 28, // 아이콘 크기 조정
+              ),
+              label: '홈',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.camera_alt,
+                size: 28, // 아이콘 크기 조정
+              ),
+              label: '검색',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.person,
+                size: 28, // 아이콘 크기 조정
+              ),
+              label: '마이페이지',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: const Color(0xFF599468),
+          unselectedItemColor: const Color(0xFF5F5F5F),
+          onTap: _onItemTapped,
+          selectedLabelStyle: const TextStyle(
+            fontSize: 12, // 선택된 항목의 텍스트 크기 조정
+            fontWeight: FontWeight.w500, // 텍스트 스타일 설정
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.camera_alt),
-            label: '검색',
+          unselectedLabelStyle: const TextStyle(
+            fontSize: 10, // 선택되지 않은 항목의 텍스트 크기 조정
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '마이페이지',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xFF599468),
-        unselectedItemColor: Color(0xFF5F5F5F),
-        onTap: _onItemTapped,
+        ),
       ),
+
     );
   }
 }
