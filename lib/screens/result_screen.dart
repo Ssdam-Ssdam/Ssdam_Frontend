@@ -63,35 +63,35 @@ class _ResultScreenState extends State<ResultScreen> {
     } catch (e) {
       _errorMessage = "폐기물 요금 정보를 불러오는 데 실패했습니다.";
     }
-      // 정확도 체크 및 경고창 표시
-      if (_accuracy != null && _accuracy! > 0.5405652467161417) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text('알림'),
-              content: Text('AI의 정확도가 낮습니다. 다시 분석하시겠습니까?'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    widget.onNavigateToSearch(); // SearchScreen으로 이동
-                  },
-                  child: Text('예'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text('아니요'),
-                ),
-              ],
-            ),
-          );
-        });
-      }
+    // 정확도 체크 및 경고창 표시
+    if (_accuracy != null && _accuracy! > 0.5405652467161417) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('알림'),
+            content: Text('AI의 정확도가 낮습니다. 다시 분석하시겠습니까?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  widget.onNavigateToSearch(); // SearchScreen으로 이동
+                },
+                child: Text('예'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('아니요'),
+              ),
+            ],
+          ),
+        );
+      });
     }
+  }
 
 
-    Future<void> _sendFeedback(int isGood) async {
+  Future<void> _sendFeedback(int isGood) async {
     final String url = "http://3.38.250.18:3000/lar-waste/feedback"; // 서버 URL
 
     try {
