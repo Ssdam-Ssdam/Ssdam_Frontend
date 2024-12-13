@@ -21,6 +21,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   File? _selectedImage;
+  bool isLoading = false; // 로딩 상태를 추적하는 변수
 
   // 이미지 선택 메서드
   Future<void> _pickImage(ImageSource source) async {
@@ -44,6 +45,10 @@ class _SearchScreenState extends State<SearchScreen> {
     final String url = "http://3.38.250.18:3000/lar-waste/upload";
 
     try {
+      setState(() {
+        isLoading = true; // 업로드 시작 전에 로딩 상태 true로 설정
+      });
+
       final token = await SecureStorageUtil.getToken();
       if (token == null) {
         _showAlert('로그인이 필요합니다.');
@@ -92,6 +97,10 @@ class _SearchScreenState extends State<SearchScreen> {
       }
     } catch (error) {
       _showAlert('네트워크 오류: $error');
+    } finally {
+      setState(() {
+        isLoading = false; // 업로드가 끝나면 로딩 상태를 false로 설정
+      });
     }
   }
 
@@ -110,6 +119,26 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ],
           ),
+    );
+  }
+
+  // 이미지 분석 중 팝업
+  void _showProcessingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 배경 클릭 시 닫히지 않도록 설정
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 15),
+              Text('이미지 분석 중...', style: TextStyle(fontSize: 16)),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -248,57 +277,63 @@ class _SearchScreenState extends State<SearchScreen> {
                             ],
                           ),
                         ),
-                        Container(
-                          width: 135,
-                          height: 130,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Color(0xFF599468),
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center, // 아이콘이 아래로, 텍스트가 위로 배치되도록 설정
-                            children: [
-                              RichText(
-                                textAlign: TextAlign.center, // 텍스트 중앙 정렬
-                                text: TextSpan(
-                                  style: TextStyle(
-                                    color: Color(0xFF5F5F5F),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  children: [
-                                    TextSpan(
-                                      text: '나의 대형 폐기물\n', // 첫 번째 텍스트 부분
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: '수수료', // "수수료" 부분
-                                      style: TextStyle(
-                                        fontSize: 21, // 글자 크기 키움
-                                        color: Color(0xFF599468), // 색상 지정
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: ' 찾기', // 나머지 텍스트 부분
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 8), // 텍스트와 아이콘 사이의 간격
-                              Icon(
-                                Icons.attach_money,
+                        InkWell(
+                          onTap: (){
+                            _showProcessingDialog(); // 팝업 띄우기
+                            _uploadImage();
+                          },
+                          child: Container(
+                            width: 135,
+                            height: 130,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
                                 color: Color(0xFF599468),
-                                size: 40,
                               ),
-                            ],
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center, // 아이콘이 아래로, 텍스트가 위로 배치되도록 설정
+                              children: [
+                                RichText(
+                                  textAlign: TextAlign.center, // 텍스트 중앙 정렬
+                                  text: TextSpan(
+                                    style: TextStyle(
+                                      color: Color(0xFF5F5F5F),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: '나의 대형 폐기물\n', // 첫 번째 텍스트 부분
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: '수수료', // "수수료" 부분
+                                        style: TextStyle(
+                                          fontSize: 21, // 글자 크기 키움
+                                          color: Color(0xFF599468), // 색상 지정
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: ' 찾기', // 나머지 텍스트 부분
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 8), // 텍스트와 아이콘 사이의 간격
+                                Icon(
+                                  Icons.attach_money,
+                                  color: Color(0xFF599468),
+                                  size: 40,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         SizedBox(width: 35), // Row 전체 여백 조정

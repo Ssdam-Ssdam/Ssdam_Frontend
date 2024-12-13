@@ -48,7 +48,7 @@ class TextResultScreen extends StatelessWidget {
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.white, // 배경색 흰색
-                    border: Border.all(color: Color(0xFF599468), width: 2),
+                    border: Border.all(color: Color(0xFF599468), width: 1.5),
                     borderRadius: BorderRadius.circular(8), // 모서리 둥글게
                   ),
                   child: ListTile(
