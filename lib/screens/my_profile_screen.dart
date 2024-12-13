@@ -192,7 +192,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             'EDIT PROFILE',
             style: TextStyle(
               color: Colors.black,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.bold,
               fontSize: 24,
             ),
           ),
@@ -280,7 +280,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   SizedBox(width: 10),
                   ElevatedButton(
                     onPressed: () async {
-
                       // 주소 검색 화면 띄우기
                       final result = await Navigator.push(
                         context,
@@ -328,14 +327,35 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ],
               ),
               SizedBox(height: 20),
-
             ],
           ),
         ),
         SizedBox(height: 20),
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // 돌아가기 버튼
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  isEditing = false; // 수정 화면에서 프로필 화면으로 전환
+                });
+                _fetchProfile(); // 프로필 데이터를 다시 가져오기
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                side: BorderSide(color: Colors.grey),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                minimumSize: Size(120, 40),
+              ),
+              child: Text(
+                '돌아가기',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            // 수정하기 버튼
             ElevatedButton(
               onPressed: _updateProfile, // 프로필 수정 버튼 클릭 시 API 호출
               style: ElevatedButton.styleFrom(

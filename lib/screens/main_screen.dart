@@ -42,7 +42,6 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-
   // TextResultScreen으로 이동
   void _navigateToTextResultScreen(List<Map<String, dynamic>> wastes) {
     setState(() {
@@ -80,7 +79,6 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-
   // 고객 문의 화면으로 이동
   void _navigateToInquiryScreen() {
     setState(() {
@@ -110,7 +108,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-// InquiryDetailScreen으로 이동
+  // InquiryDetailScreen으로 이동
   void _navigateToInquiryDetailScreen(Map<String, dynamic> inquiryData) {
     setState(() {
       _currentScreen = InquiryDetailScreen(
@@ -136,7 +134,6 @@ class _MainScreenState extends State<MainScreen> {
       );
     });
   }
-
 
   // FAQ 화면으로 이동
   void _navigateToFAQScreen() {
@@ -171,8 +168,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   // ResultScreen으로 이동 (SearchScreen에서 데이터를 전달받아 사용)
-  void _navigateToResultScreen(File image, String wasteName, double accuracy, String imageUrl, String imgId, String userId, List<Map<String, dynamic>> wasteFees,  // Pass this as an argument
-      ) {
+  void _navigateToResultScreen(File image, String wasteName, double accuracy, String imageUrl, String imgId, String userId, List<Map<String, dynamic>> wasteFees) {
     setState(() {
       _currentScreen = ResultScreen(
         image: image,
@@ -183,7 +179,6 @@ class _MainScreenState extends State<MainScreen> {
         userId: userId,
         wasteFees: wasteFees,  // wasteFees 전달
         onNavigateToSearch: _navigateToSearchScreen, // SearchScreen으로 이동하는 콜백 전달
-
       );
     });
   }
@@ -212,7 +207,7 @@ class _MainScreenState extends State<MainScreen> {
         case 1:
         // 검색 화면
           _currentScreen = SearchScreen(
-              onNavigateToResult: _navigateToResultScreen,
+            onNavigateToResult: _navigateToResultScreen,
           );
           break;
         case 2:
@@ -230,14 +225,21 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Image.asset(
-          'assets/logo.png',
-          height: 28,
+        title: Align(
+          alignment: Alignment.bottomLeft,  // 왼쪽 아래 정렬
+          child: Padding(
+            padding: const EdgeInsets.only(left: 28, top: 33), // 10픽셀씩 오른쪽과 아래로 이동
+            child: Image.asset(
+              'assets/logo.png',
+              height: 31,
+            ),
+          ),
         ),
         backgroundColor: Colors.white,
         centerTitle: false,
         elevation: 0,
         iconTheme: const IconThemeData(color: Color(0xFF5F5F5F)),
+        toolbarHeight: 60, // 높이를 원하는 값으로 조정 (예: 80으로 설정)
       ),
       body: _currentScreen,
       bottomNavigationBar: BottomNavigationBar(
