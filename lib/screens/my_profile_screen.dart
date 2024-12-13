@@ -187,17 +187,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 20),
-        Center(
-          child: Text(
-            'EDIT PROFILE',
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
-            ),
-          ),
-        ),
-        SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40.0),
           child: Column(
@@ -377,6 +366,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -427,9 +417,19 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               _userIdController.text, // userId 표시
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                             ),
-                            Text(
-                              'My Location : ${_sim_addressController.text}', // address 표시
-                              style: TextStyle(fontSize: 15, color: Colors.black),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.location_on, // 위치 아이콘
+                                  size: 18, // 텍스트 크기와 동일하게 조정
+                                  color: Color(0xFF6EB681), // 아이콘 색상 설정
+                                ),
+                                SizedBox(width: 5), // 아이콘과 텍스트 간격
+                                Text(
+                                  _sim_addressController.text, // address 표시
+                                  style: TextStyle(fontSize: 15, color: Colors.black),
+                                ),
+                              ],
                             ),
                             SizedBox(height: 30),
                           ],
