@@ -74,7 +74,8 @@ class _SearchScreenState extends State<SearchScreen> {
           String imageUrl = data['image'] ?? '';
           String imgId = (data['imgId'] ?? '').toString();
           String userId = (data['userId'] ?? '').toString();
-          List<Map<String, dynamic>> wasteFees = List<Map<String, dynamic>>.from(data['waste_fees']);
+          List<Map<String, dynamic>> wasteFees = List<
+              Map<String, dynamic>>.from(data['waste_fees']);
 
           widget.onNavigateToResult!(
             _selectedImage!,
@@ -98,16 +99,17 @@ class _SearchScreenState extends State<SearchScreen> {
   void _showAlert(String message) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('알림'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('확인'),
+      builder: (context) =>
+          AlertDialog(
+            title: Text('알림'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('확인'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -149,21 +151,36 @@ class _SearchScreenState extends State<SearchScreen> {
                       )
                     else
                       Container(
-                        width: 310,
-                        height: 340,
+                        width: 290,
+                        height: 300,
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Color(0xFF599468)),
+                          color: Color(0xFFF5F5F5),  // Lighter gray color
+                          border: Border.all(
+                              color: Color(0xFF599468)),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         alignment: Alignment.center,
-                        child: Text(
-                          '이미지를 업로드하고 수수료 찾기 버튼을 클릭하세요',
-                          style: TextStyle(fontSize: 18),
-                          textAlign: TextAlign.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.file_upload,
+                              color: Color(0xFF599468),
+                              size: 50,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              '이미지 업로드',
+                              style: TextStyle(
+                                color: Color(0xFF5F5F5F),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
                       ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 25),
                     Row(
                       children: [
                         Expanded(
@@ -172,24 +189,25 @@ class _SearchScreenState extends State<SearchScreen> {
                               InkWell(
                                 onTap: () => _pickImage(ImageSource.gallery),
                                 child: Container(
-                                  width: 150,
-                                  height: 80,
+                                  width: 115,
+                                  height: 90,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    border: Border.all(color: Color(0xFF599468)),
-                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                        color: Color(0xFF599468)),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Icon(Icons.photo,
-                                          color: Color(0xFF599468), size: 30),
+                                          color: Color(0xFF599468), size: 41),
                                       SizedBox(height: 8),
                                       Text(
                                         '갤러리',
                                         style: TextStyle(
                                           color: Color(0xFF5F5F5F),
-                                          fontSize: 15,
+                                          fontSize: 12,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -197,28 +215,29 @@ class _SearchScreenState extends State<SearchScreen> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 20),
+                              SizedBox(height: 22),
                               InkWell(
                                 onTap: () => _pickImage(ImageSource.camera),
                                 child: Container(
-                                  width: 150,
-                                  height: 80,
+                                  width: 115,
+                                  height: 90,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    border: Border.all(color: Color(0xFF599468)),
-                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                        color: Color(0xFF599468)),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(Icons.camera_alt,
-                                          color: Color(0xFF599468), size: 30),
+                                      Icon(Icons.add_a_photo,
+                                          color: Color(0xFF599468), size: 40),
                                       SizedBox(height: 8),
                                       Text(
                                         '카메라',
                                         style: TextStyle(
                                           color: Color(0xFF5F5F5F),
-                                          fontSize: 15,
+                                          fontSize: 12,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -229,18 +248,61 @@ class _SearchScreenState extends State<SearchScreen> {
                             ],
                           ),
                         ),
-                        SizedBox(width: 20),
+                        SizedBox(width: 8), // 간격 조정
                         Container(
-                          width: 150,
-                          height: 120,
-                          child: InkWell(
-                            onTap: _uploadImage,
-                            child: Image.asset(
-                              'assets/findbutton.png',
-                              fit: BoxFit.cover,
+                          width: 135,
+                          height: 130,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: Color(0xFF599468),
                             ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center, // 아이콘이 아래로, 텍스트가 위로 배치되도록 설정
+                            children: [
+                              RichText(
+                                textAlign: TextAlign.center, // 텍스트 중앙 정렬
+                                text: TextSpan(
+                                  style: TextStyle(
+                                    color: Color(0xFF5F5F5F),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: '나의 대형 폐기물\n', // 첫 번째 텍스트 부분
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: '수수료', // "수수료" 부분
+                                      style: TextStyle(
+                                        fontSize: 20, // 글자 크기 키움
+                                        color: Color(0xFF599468), // 색상 지정
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: ' 찾기', // 나머지 텍스트 부분
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 8), // 텍스트와 아이콘 사이의 간격
+                              Icon(
+                                Icons.attach_money,
+                                color: Color(0xFF599468),
+                                size: 40,
+                              ),
+                            ],
                           ),
                         ),
+                        SizedBox(width: 35), // Row 전체 여백 조정
                       ],
                     ),
                   ],

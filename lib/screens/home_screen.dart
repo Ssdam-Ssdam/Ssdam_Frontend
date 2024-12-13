@@ -21,6 +21,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // 기존 배너 이미지 목록
   final List<String> bannerImages = [
     'assets/banner.png',
     'assets/banner1.png',
@@ -32,17 +33,15 @@ class _HomeScreenState extends State<HomeScreen> {
   int currentPage = 0;
 
   String? homeMessage; // 홈 화면 데이터를 저장할 변수
-  String searchQuery = "";  //text_result
+  String searchQuery = "";  // text_result
   bool _isLoading = false; // 검색 로딩 상태
-
-
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(
       initialPage: 0,
-      viewportFraction: 0.8,
+      viewportFraction: 0.9, // 배너 양옆 보이는 정도 줄이기 위해 값을 낮춤
     );
 
     // 자동 순환
@@ -74,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  // !!!!!!!!!텍스트 검색 요청
+  // 텍스트 검색 요청
   Future<void> _searchWaste() async {
     if (searchQuery.isEmpty) {
       print("검색어를 입력해주세요.");
@@ -131,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 15.0),
           child: Column(
             children: [
               // 홈 화면 데이터 출력
@@ -145,12 +144,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-              SizedBox(height: 20),
+              SizedBox(height: 30),
 
               // 배너 슬라이더
               SizedBox(
-                width: 350,
-                height: 220,
+                width: double.infinity,
+                height: 200,
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: bannerImages.length,
@@ -161,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0), // Padding 값을 줄여서 양옆 보이는 부분을 줄임
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.asset(
@@ -173,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 35),
 
               // 검색 바
               Row(
@@ -202,43 +201,59 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? CircularProgressIndicator()
                       : IconButton(
                     icon: Icon(Icons.search),
-                    onPressed: _searchWaste, // 검색 함수 호출
+                    onPressed: _searchWaste,
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 35),
+
               // 지도 및 버튼들
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 지도 섹션
-                  Expanded(
+                  Flexible(
+                    flex: 3,
                     child: GestureDetector(
-                      onTap: widget.onNavigateToMap, // 지도 클릭 시 콜백 호출
+                      onTap: widget.onNavigateToMap,
                       child: Container(
                         height: 250,
+                        padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Color(0xFF599468)),
-                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Color(0xFF599468), width: 1), // 테두리 굵기 1로 수정
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              '우리 동네',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Color(0xFF599468),
-                                  fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 5, top: 5),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 10.0),
+                                  child: Text(
+                                    '우리 동네',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Color(0xFF599468),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
-                            Text(
-                              '폐기물 스티커 판매점 찾기',
-                              style: TextStyle(
-                                  fontSize: 15,
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 5),
+                              child: Text(
+                                '폐기물 스티커 판매점 찾기',
+                                style: TextStyle(
+                                  fontSize: 13,
                                   color: Color(0xFF5F5F5F),
-                                  fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                             SizedBox(height: 10),
                             Expanded(
@@ -258,19 +273,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       // 자주 묻는 질문 버튼
                       Container(
                         width: 130,
-                        height: 120,
+                        height: 112,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          border: Border.all(color: Color(0xFF599468)),
-                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Color(0xFF599468), width: 1), // 테두리 굵기 1로 수정
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         child: InkWell(
-                          onTap: widget.onNavigateToFAQ, // FAQScreen 이동 콜백 호출
+                          onTap: widget.onNavigateToFAQ,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.help_outline,
-                                  color: Color(0xFF599468), size: 30),
+                              Icon(Icons.help_outline, color: Color(0xFF599468), size: 45), // 물음표 아이콘으로 수정
                               SizedBox(height: 8),
                               Text(
                                 '자주 묻는 질문',
@@ -284,23 +298,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 25),
                       // 고객 문의 버튼
                       Container(
                         width: 130,
-                        height: 120,
+                        height: 112,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          border: Border.all(color: Color(0xFF599468)),
-                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Color(0xFF599468), width: 1), // 테두리 굵기 1로 수정
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         child: InkWell(
-                          onTap: widget.onNavigateToInquiry, // InquiryScreen 이동 콜백 호출
+                          onTap: widget.onNavigateToInquiry,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.person_outline,
-                                  color: Color(0xFF599468), size: 30),
+                              Icon(Icons.mail_outline, color: Color(0xFF599468), size: 45), // 아이콘 크기 1.5배
                               SizedBox(height: 8),
                               Text(
                                 '고객 문의',
