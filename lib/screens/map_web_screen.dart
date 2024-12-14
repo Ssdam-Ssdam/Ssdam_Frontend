@@ -18,7 +18,7 @@ class MapWebScreen extends StatefulWidget {
 }
 
 class _MapWebScreenState extends State<MapWebScreen> {
-  final String serverUrl = 'http://13.124.47.191:3000/lar-waste/nearby-stores';
+  final String serverUrl = 'http://3.36.62.234:3000/lar-waste/nearby-stores';
   LatLng? userLocation;
   List<Marker> storeMarkers = [];
   List<Map<String, dynamic>> storeData = [];

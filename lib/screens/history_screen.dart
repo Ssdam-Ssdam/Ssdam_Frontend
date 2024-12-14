@@ -18,7 +18,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Future<void> _fetchHistoryData() async {
-    final url = Uri.parse('http://13.124.47.191:3000/user/history'); // 서버 URL
+    final url = Uri.parse('http://3.36.62.234:3000/user/history'); // 서버 URL
     try {
       final token = await SecureStorageUtil.getToken();
       if (token == null) {
@@ -99,7 +99,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             ClipRRect(
                               //borderRadius: BorderRadius.circular(8),
                               child: Image.network(
-                                'http://13.124.47.191:3000$filePath',
+                                'http://3.36.62.234:3000$filePath',
                                 height: 100,
                                 width: 100,
                                 fit: BoxFit.cover,

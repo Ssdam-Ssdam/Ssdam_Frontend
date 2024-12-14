@@ -92,7 +92,7 @@ class _ResultScreenState extends State<ResultScreen> {
 
 
   Future<void> _sendFeedback(int isGood) async {
-    final String url = "http://13.124.47.191:3000/lar-waste/feedback"; // 서버 URL
+    final String url = "http://3.36.62.234:3000/lar-waste/feedback"; // 서버 URL
 
     try {
       final token = await SecureStorageUtil.getToken(); // 저장된 토큰 가져오기
@@ -144,7 +144,7 @@ class _ResultScreenState extends State<ResultScreen> {
       final token = await SecureStorageUtil.getToken();
 
       // URL에 검색어를 포함
-      final Uri uri = Uri.parse('http://13.124.47.191:3000/lar-waste/search').replace(
+      final Uri uri = Uri.parse('http://3.36.62.234:3000/lar-waste/search').replace(
         queryParameters: {
           'waste_name': query, // 검색어 추가
         },

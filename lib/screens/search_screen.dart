@@ -42,7 +42,7 @@ class _SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    final String url = "http://13.124.47.191:3000/lar-waste/upload";
+    final String url = "http://3.36.62.234:3000/lar-waste/upload";
 
     try {
       setState(() {

@@ -39,7 +39,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   // 프로필 정보 조회 (GET 요청)
   Future<void> _fetchProfile() async {
-    final String url = "http://13.124.47.191:3000/user/profile"; // Node.js 서버 URL
+    final String url = "http://3.36.62.234:3000/user/profile"; // Node.js 서버 URL
 
     try {
       final token = await SecureStorageUtil.getToken(); // 저장된 토큰 가져오기
@@ -76,7 +76,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
 // 프로필 정보 수정 (PUT 요청)
   Future<void> _updateProfile() async {
-    final String url = "http://13.124.47.191:3000/user/profile/update"; // Node.js 서버 URL
+    final String url = "http://3.36.62.234:3000/user/profile/update"; // Node.js 서버 URL
 
     final String userId = _userIdController.text;
     final String password = _passwordController.text;
@@ -89,7 +89,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     final String zonecodeStr = _zonecodeController.text.trim(); // 주소 입력값 가져오기
     // final zonecode = int.parse(zonecodeStr); // 정수로 변환
 
-    int zonecode = 0;  // 기본값 설정
+    int zonecode = 0; // 기본값 설정
     try {
       zonecode = int.parse(zonecodeStr); // 정수로 변환
     } catch (e) {
@@ -170,7 +170,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 minimumSize: Size(120, 40),
               ),
               child: Text(
-                '분석 결과 조회',
+                'My 분석 기록',
                 style: TextStyle(color: Colors.black),
               ),
             ),
@@ -181,7 +181,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     );
   }
 
-  // 수정 화면 위젯
+
+// 수정화면 위젯
   Widget buildEditProfileView() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,7 +220,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ),
               ),
               SizedBox(height: 20),
-
               TextField(
                 controller: _nameController, // name 컨트롤러 연결
                 decoration: InputDecoration(
@@ -233,7 +233,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ),
               ),
               SizedBox(height: 20),
-
               TextField(
                 controller: _emailController, // email 컨트롤러 연결
                 decoration: InputDecoration(
@@ -247,7 +246,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ),
               ),
               SizedBox(height: 20),
-
               // 주소 입력 필드 + 검색 버튼
               Row(
                 children: [
@@ -273,17 +271,18 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => DaumPostcodeSearch(
-                            onConsoleMessage: (_, message) {
-                              print("Console Message: $message");
-                            },
-                            onReceivedError: (controller, request, error) {
-                              setState(() {
-                                _isError = true;
-                                errorMessage = error.description;
-                              });
-                            },
-                          ),
+                          builder: (context) =>
+                              DaumPostcodeSearch(
+                                onConsoleMessage: (_, message) {
+                                  print("Console Message: $message");
+                                },
+                                onReceivedError: (controller, request, error) {
+                                  setState(() {
+                                    _isError = true;
+                                    errorMessage = error.description;
+                                  });
+                                },
+                              ),
                         ),
                       );
 
@@ -323,41 +322,36 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // 돌아가기 버튼
-            ElevatedButton(
+            // 돌아가기 버튼 (화살표 아이콘으로 변경)
+            IconButton(
               onPressed: () {
                 setState(() {
                   isEditing = false; // 수정 화면에서 프로필 화면으로 전환
                 });
                 _fetchProfile(); // 프로필 데이터를 다시 가져오기
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                side: BorderSide(color: Colors.grey),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                minimumSize: Size(120, 40),
-              ),
-              child: Text(
-                '돌아가기',
-                style: TextStyle(color: Colors.black),
+              icon: Icon(
+                Icons.arrow_back, // 화살표 아이콘
+                color: Color(0xFF5F5F5F), // 색상 설정
               ),
             ),
-            // 수정하기 버튼
+            // 저장하기 버튼
             ElevatedButton(
               onPressed: _updateProfile, // 프로필 수정 버튼 클릭 시 API 호출
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                side: BorderSide(color: Colors.grey),
+                backgroundColor: Color(0xFF599468), // 버튼 색상
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(10.0), // 덜 둥글게 설정
                 ),
-                minimumSize: Size(120, 40),
+                minimumSize: Size(120, 50), // 가로 길이 증가
               ),
               child: Text(
-                '수정하기',
-                style: TextStyle(color: Colors.black),
+                '저장하기', // 텍스트 변경
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16, // 글자 크기
+                  fontWeight: FontWeight.bold, // 글씨 굵게
+                ),
               ),
             ),
           ],
@@ -376,10 +370,13 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.only(right: 16, bottom: 16, left:16, top:25),
+                padding: const EdgeInsets.only(
+                    right: 16, bottom: 16, left: 16, top: 25),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // 가로선 제거
+                    SizedBox(height: 30), // AppBar와 MY PROFILE 사이의 간격을 넓힘
                     // 항상 표시되는 공통 헤더
                     Center(
                       child: Text(
@@ -405,38 +402,43 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             SizedBox(height: 10),
                             Text(
                               _nameController.text, // name 표시
-                              style: TextStyle(fontSize: 15, color: Colors.black),
+                              style: TextStyle(
+                                  fontSize: 15, color: Colors.black),
                             ),
                           ],
                         ),
                         SizedBox(width: 20),
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
                           children: [
                             Text(
                               _userIdController.text, // userId 표시
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w600),
                             ),
+                            SizedBox(height: 10), // 아이디와 주소 사이 간격 추가
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              // 기본 정렬
                               children: [
                                 Icon(
                                   Icons.location_on, // 위치 아이콘
-                                  size: 18, // 텍스트 크기와 동일하게 조정
+                                  size: 20, // 아이콘 크기 증가
                                   color: Color(0xFF6EB681), // 아이콘 색상 설정
                                 ),
                                 SizedBox(width: 5), // 아이콘과 텍스트 간격
                                 Text(
                                   _sim_addressController.text, // address 표시
-                                  style: TextStyle(fontSize: 15, color: Colors.black),
+                                  style: TextStyle(
+                                      fontSize: 15, color: Colors.black),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 30),
+                            SizedBox(height: 30), // 주소와 다른 요소 간격
                           ],
                         ),
                       ],
                     ),
-
                     SizedBox(height: 20),
                     isEditing ? buildEditProfileView() : buildProfileView(),
                   ],
@@ -449,7 +451,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center, // 중간 정렬
                 children: [
                   ElevatedButton(
                     onPressed: () async {
@@ -460,7 +462,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LoginScreen(), // LoginScreen을 여기에 넣어주세요
+                          builder: (context) =>
+                              LoginScreen(), // LoginScreen을 여기에 넣어주세요
                         ),
                             (Route<dynamic> route) => false, // 이전 모든 화면 제거
                       );
@@ -469,16 +472,18 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       backgroundColor: Colors.white,
                       side: BorderSide(color: Color(0xFFD9D9D9)),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      minimumSize: Size(120, 40),
+                      minimumSize: Size(300, 50), // 버튼 가로 길이 조정
                     ),
                     child: Text(
-                      'Log Out',
-                      style: TextStyle(color: Colors.black),
+                      '로그아웃',
+                      style: TextStyle(
+                        color: Color(0xFF5F5F5F), // 글자 색 변경
+                        fontSize: 16, // 글자 크기 조정
+                      ),
                     ),
                   ),
-
                 ],
               ),
             ),

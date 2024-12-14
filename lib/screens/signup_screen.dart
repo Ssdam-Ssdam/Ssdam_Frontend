@@ -26,7 +26,7 @@ class SignupScreenState extends State<SignupScreen> {
   final TextEditingController _zonecodeController = TextEditingController(); // 주소 컨트롤러-우편번호
 
   Future<void> _register(BuildContext context) async {
-    final String url = "http://13.124.47.191:3000/user/register"; // Node.js 서버 URL
+    final String url = "http://3.36.62.234:3000/user/register"; // Node.js 서버 URL
     final String userId = _userIdController.text.trim(); // 아이디 입력값 가져오기
     final String password = _passwordController.text.trim(); // 비밀번호 입력값 가져오기
     final String confirmPassword = _confirmPasswordController.text.trim(); // 비밀번호 확인
