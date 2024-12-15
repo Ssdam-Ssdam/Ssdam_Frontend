@@ -43,17 +43,49 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
       if (response.statusCode == 200) {
         showDialog(
           context: context,
-          builder: (context) => AlertDialog(
-            title: Text('삭제되었습니다'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  widget.onNavigateBack(); // InquiryScreen으로 이동
-                },
-                child: Text('확인'),
+          builder: (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15), // 알림창 모서리 둥글게 설정
+            ),
+            child: Container(
+              constraints: BoxConstraints(maxHeight: 80, maxWidth: 250), // 크기 제한
+              child: Stack(
+                children: [
+                  // 텍스트 (중앙에 배치)
+                  Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8), // 텍스트 좌우 여백 최소화
+                      child: Text(
+                        '삭제ㅑ되었습니다!',
+                        style: TextStyle(
+                          fontSize: 16, // 텍스트 크기 약간 축소
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF5F5F5F),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  // 닫기 버튼 ('X'를 우측 상단에 배치)
+                  Positioned(
+                    top: 4, // 위쪽 여백 최소화
+                    right: 4, // 오른쪽 여백 최소화
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        color: Color(0xFF8A2BE2), // 색상 설정
+                        size: 16, // 아이콘 크기 축소
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        widget.onNavigateBack(); // 이전 화면으로 이동
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         );
       } else {
@@ -68,7 +100,6 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +116,6 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
 
     final isNoAnswer = answerContent == '곧 답변 드리겠습니다. 조금만 기다려주세요 :)';
 
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -95,23 +125,24 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
           children: [
             // 상단바
             Padding(
-              padding: const EdgeInsets.only(bottom: 16.0, top: 11),
+              padding: const EdgeInsets.only(bottom: 16.0, top: 30),  // 상단 여백 30
               child: Stack(
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
                       onTap: widget.onNavigateBack,
-                      child: Image.asset(
-                        'assets/backbutton.png',
-                        height: 40,
+                      child: Icon(
+                        Icons.arrow_back,  // 기본 안드로이드 뒤로가기 화살표 아이콘
+                        color: Color(0xFF5F5F5F),  // 색상 #5f5f5f 설정
+                        size: 30,  // 아이콘 크기 30
                       ),
                     ),
                   ),
                   Align(
                     alignment: Alignment.center,
                     child: Text(
-                      '1:1 문의',
+                      '문의 내용',  // 텍스트 '문의 내용'으로 설정
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w600,
@@ -122,6 +153,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
                 ],
               ),
             ),
+
             // 제목
             SizedBox(height: 10),
             Text(
@@ -152,45 +184,49 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
             ),
             SizedBox(height: 30),
             // 답변 박스
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: isNoAnswer ? Colors.grey[200] : Color(0xFFF0F9F0), // 답변 여부에 따라 배경색 설정
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "A.",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: isNoAnswer ? Colors.grey : Color(0xFF599468), // 글자 색도 조건부 변경
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    answerContent,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black87, // 텍스트는 동일한 색상 유지
-                    ),
-                  ),
-                  if (!isNoAnswer) // 답변이 있는 경우에만 답변 날짜 표시
-                    SizedBox(height: 10),
-                  if (!isNoAnswer)
+            // 답변 박스
+            Align(
+              alignment: Alignment.centerRight,  // 오른쪽 정렬
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: isNoAnswer ? Colors.grey[200] : Color(0xFFF0F9F0), // 답변 여부에 따라 배경색 설정
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      "답변 날짜: $resDate",
+                      "A.",
                       style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: isNoAnswer ? Colors.grey : Color(0xFF599468), // 글자 색도 조건부 변경
                       ),
                     ),
-                ],
+                    SizedBox(height: 8),
+                    Text(
+                      answerContent,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87, // 텍스트는 동일한 색상 유지
+                      ),
+                    ),
+                    if (!isNoAnswer) // 답변이 있는 경우에만 답변 날짜 표시
+                      SizedBox(height: 10),
+                    if (!isNoAnswer)
+                      Text(
+                        "답변 날짜: $resDate",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 15),
             // 삭제 버튼
             Align(
               alignment: Alignment.bottomRight,

@@ -36,22 +36,26 @@ class _FAQScreenState extends State<FAQScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,  // 배경색을 흰색으로 설정
+      backgroundColor: Colors.white, // 배경색을 흰색으로 설정
       body: Column(
         children: [
           // 상단바 역할
           Padding(
-            padding: const EdgeInsets.only(right: 16, bottom: 16, left:16, top:25),
+            padding: const EdgeInsets.only(bottom: 8.0, top: 30), // 상단 여백 30에서 8로 변경
             child: Stack(
               children: [
-                // 뒤로 가기 버튼 (왼쪽 정렬)
+                // 뒤로 가기 아이콘 (왼쪽 정렬)
                 Align(
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
                     onTap: widget.onNavigateBack, // HomeScreen으로 돌아가기
-                    child: Image.asset(
-                      'assets/backbutton.png', // backbutton.png 파일 경로 확인 필요
-                      height: 40,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0), // 왼쪽 여백 추가
+                      child: Icon(
+                        Icons.arrow_back, // 기본 안드로이드 뒤로가기 화살표 아이콘
+                        color: Color(0xFF5F5F5F), // 색상 #5f5f5f 설정
+                        size: 30, // 아이콘 크기 30
+                      ),
                     ),
                   ),
                 ),
@@ -59,7 +63,7 @@ class _FAQScreenState extends State<FAQScreen> {
                 Align(
                   alignment: Alignment.center,
                   child: Text(
-                    '자주 묻는 질문',
+                    '자주 묻는 질문', // 텍스트 '자주 묻는 질문'으로 설정
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.w600,
@@ -77,23 +81,31 @@ class _FAQScreenState extends State<FAQScreen> {
           // FAQ 리스트
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0), // 좌우 여백만 유지
               itemCount: faqs.length,
               itemBuilder: (context, index) {
                 return Card(
-                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                  margin: EdgeInsets.symmetric(vertical: 8.0), // 카드 간격 좁히기
                   color: Colors.white, // Card 배경색 설정
                   child: ExpansionTile(
                     title: Text(
                       faqs[index]['question']!,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 16, // 질문 크기
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF5F5F5F), // 질문 색상 변경
+                      ),
                     ),
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
                           faqs[index]['answer']!,
-                          style: TextStyle(fontSize: 14, color: Colors.black87),
+                          style: TextStyle(
+                            fontSize: 16, // 답변 크기를 질문 크기와 동일하게 설정
+                            color: Colors.black, // 답변 색상을 black으로 설정
+                          ),
+                          textAlign: TextAlign.left, // 텍스트 왼쪽 정렬
                         ),
                       ),
                     ],
