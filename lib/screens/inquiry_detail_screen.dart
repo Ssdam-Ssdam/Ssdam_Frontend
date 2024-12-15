@@ -57,7 +57,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8), // 텍스트 좌우 여백 최소화
                       child: Text(
-                        '삭제ㅑ되었습니다!',
+                        '삭제되었습니다!',
                         style: TextStyle(
                           fontSize: 16, // 텍스트 크기 약간 축소
                           fontWeight: FontWeight.w500,
@@ -125,7 +125,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
           children: [
             // 상단바
             Padding(
-              padding: const EdgeInsets.only(bottom: 16.0, top: 30),  // 상단 여백 30
+              padding: const EdgeInsets.only(bottom: 16.0, top: 17),  // 상단 여백 30
               child: Stack(
                 children: [
                   Align(

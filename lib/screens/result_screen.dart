@@ -366,8 +366,8 @@ class _ResultScreenState extends State<ResultScreen> {
                           icon: Icon(
                             Icons.thumb_up,
                             color: _isLike && _isButtonClicked
-                                ? Color(0xFF6C6C6C) // 눌렀을 때 아이콘 색상
-                                : Color(0xFFC7E5B5), // 디폴트 아이콘 색상 (하얀색)
+                                ? Color(0xFF599468) // 눌렀을 때 아이콘 색상
+                                : Color(0xFFD9D9D9), // 디폴트 아이콘 색상 (하얀색)
                           ),
                           iconSize: 35,
                           onPressed: () {
@@ -384,8 +384,8 @@ class _ResultScreenState extends State<ResultScreen> {
                           icon: Icon(
                             Icons.thumb_down,
                             color: !_isLike && _isButtonClicked
-                                ? Color(0xFF6C6C6C) // 눌렀을 때 아이콘 색상
-                                : Color(0xFFC7E5B5), // 디폴트 아이콘 색상 (하얀색)
+                                ? Color(0xFF599468) // 눌렀을 때 아이콘 색상
+                                : Color(0xFFD9D9D9), // 디폴트 아이콘 색상 (하얀색)
                           ),
                           iconSize: 35,
                           onPressed: () {

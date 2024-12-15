@@ -18,7 +18,7 @@ class TextResultScreen extends StatelessWidget {
         children: [
           // 검색 결과 텍스트
           Padding(
-            padding: const EdgeInsets.only(top: 40),
+            padding: const EdgeInsets.only(top: 30),
             child: Align(
               alignment: Alignment.center,
               child: Text(
