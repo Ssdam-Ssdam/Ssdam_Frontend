@@ -67,7 +67,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 const SizedBox(height: 20),
                 const Center(
                   child: Text(
-                    'AI 분석 결과',
+                    '나의 AI 분석 결과',
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.w600,
@@ -134,7 +134,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   Padding(
                                     padding: EdgeInsets.all(4.0),
                                     child: Text(
-                                      '요금',
+                                      '수수료',
                                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                                     ),
                                   ),

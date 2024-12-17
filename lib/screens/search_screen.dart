@@ -154,7 +154,7 @@ class _SearchScreenState extends State<SearchScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(right: 16, bottom: 16, left:16, top:20),
+            padding: const EdgeInsets.only(right: 16, bottom: 16, left: 16, top: 20),
             child: Column(
               children: [
                 Text(
@@ -189,8 +189,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         height: 300,
                         decoration: BoxDecoration(
                           color: Color(0xFFF5F5F5),  // Lighter gray color
-                          border: Border.all(
-                              color: Color(0xFF599468)),
+                          border: Border.all(color: Color(0xFF599468)),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         alignment: Alignment.center,
@@ -208,7 +207,8 @@ class _SearchScreenState extends State<SearchScreen> {
                               style: TextStyle(
                                 color: Color(0xFF5F5F5F),
                                 fontSize: 16,
-                                fontWeight: FontWeight.w600),
+                                fontWeight: FontWeight.w600,
+                              ),
                               textAlign: TextAlign.center,
                             ),
                           ],
@@ -216,133 +216,101 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                     SizedBox(height: 25),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
-                          child: Column(
-                            children: [
-                              InkWell(
-                                onTap: () => _pickImage(ImageSource.gallery),
-                                child: Container(
-                                  width: 120,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                        color: Color(0xFF599468)),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.photo,
-                                          color: Color(0xFF599468), size: 41),
-                                      SizedBox(height: 8),
-                                      Text(
-                                        '갤러리',
-                                        style: TextStyle(
-                                          color: Color(0xFF5F5F5F),
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 22),
-                              InkWell(
-                                onTap: () => _pickImage(ImageSource.camera),
-                                child: Container(
-                                  width: 120,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                        color: Color(0xFF599468)),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.add_a_photo,
-                                          color: Color(0xFF599468), size: 40),
-                                      SizedBox(height: 8),
-                                      Text(
-                                        '카메라',
-                                        style: TextStyle(
-                                          color: Color(0xFF5F5F5F),
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                         InkWell(
-                          onTap: (){
-                            _showProcessingDialog(); // 팝업 띄우기
-                            _uploadImage();
-                          },
+                          onTap: () => _pickImage(ImageSource.gallery),
                           child: Container(
-                            width: 135,
-                            height: 130,
+                            width: 135, // 상단 박스와 동일한 가로 길이
+                            height: 100,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              border: Border.all(
-                                color: Color(0xFF599468),
-                              ),
+                              border: Border.all(color: Color(0xFF599468)),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center, // 아이콘이 아래로, 텍스트가 위로 배치되도록 설정
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                RichText(
-                                  textAlign: TextAlign.center, // 텍스트 중앙 정렬
-                                  text: TextSpan(
-                                    style: TextStyle(
-                                      color: Color(0xFF5F5F5F),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                        text: '나의 대형 폐기물\n', // 첫 번째 텍스트 부분
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: '수수료', // "수수료" 부분
-                                        style: TextStyle(
-                                          fontSize: 21, // 글자 크기 키움
-                                          color: Color(0xFF599468), // 색상 지정
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: ' 찾기', // 나머지 텍스트 부분
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                    ],
+                                Icon(Icons.photo, color: Color(0xFF599468), size: 41),
+                                SizedBox(height: 8),
+                                Text(
+                                  '갤러리',
+                                  style: TextStyle(
+                                    color: Color(0xFF5F5F5F),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
                                   ),
-                                ),
-                                SizedBox(height: 8), // 텍스트와 아이콘 사이의 간격
-                                Icon(
-                                  Icons.attach_money,
-                                  color: Color(0xFF599468),
-                                  size: 40,
                                 ),
                               ],
                             ),
                           ),
                         ),
-                        SizedBox(width: 35), // Row 전체 여백 조정
+                        SizedBox(width: 15),
+                        InkWell(
+                          onTap: () => _pickImage(ImageSource.camera),
+                          child: Container(
+                            width: 135, // 상단 박스와 동일한 가로 길이
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Color(0xFF599468)),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.add_a_photo, color: Color(0xFF599468), size: 40),
+                                SizedBox(height: 8),
+                                Text(
+                                  '카메라',
+                                  style: TextStyle(
+                                    color: Color(0xFF5F5F5F),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
+                    ),
+                    SizedBox(height: 22),
+                    InkWell(
+                      onTap: () {
+                        _showProcessingDialog(); // 팝업 띄우기
+                        _uploadImage();
+                      },
+                      child: Container(
+                        width: 290, // 업로드 사진 박스와 동일한 가로 길이
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: Color(0xFF599468), // 버튼 색상
+                          borderRadius: BorderRadius.circular(20), // 둥글기 강조
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2), // 그림자 색상
+                              blurRadius: 8, // 그림자의 흐림 정도
+                              offset: Offset(2, 4), // 그림자 방향과 거리
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "나의 대형 폐기물 수수료 찾기",
+                              style: TextStyle(
+                                color: Colors.white, // 텍스트 색상
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600, // 폰트 굵기를 w600으로 변경
+                              ),
+                            ),
+                            SizedBox(width: 10), // 텍스트와 아이콘 간 간격
+                            Icon(Icons.search, size: 27, color: Colors.white), // 아이콘 색상
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),

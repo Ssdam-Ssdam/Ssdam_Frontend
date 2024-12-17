@@ -274,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 5),
                               child: Text(
-                                '폐기물 스티커 판매점 찾기',
+                                '스티커 판매점 찾기',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Color(0xFF5F5F5F),

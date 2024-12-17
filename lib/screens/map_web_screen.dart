@@ -137,7 +137,10 @@ class _MapWebScreenState extends State<MapWebScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Nearby Stores'),
+        title: const Text(
+          '근처 대형폐기물 스티커 판매점 찾기',
+          style: TextStyle(fontSize: 20),  // 글씨 크기 조정
+        ),
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),

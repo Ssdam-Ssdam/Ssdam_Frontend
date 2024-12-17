@@ -64,7 +64,7 @@ class _ResultScreenState extends State<ResultScreen> {
       _errorMessage = "폐기물 요금 정보를 불러오는 데 실패했습니다.";
     }
     // 정확도 체크 및 경고창 표시
-    if (_accuracy != null && _accuracy! > 0.5405652467161417) {
+    if (_accuracy != null && _accuracy! > 1.5405652467161417) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
           context: context,
